@@ -2,8 +2,20 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "framework.h"
-#include "helper.h"
-#include "war3.h"
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define NOMINMAX
+// Windows Header Files
+#include <windows.h>
+
+#include <cassert>
+#include <concepts>
+#include <vector>
+#include <string>
+#include <functional>
+#include <type_traits>
+#include <format>
+
+#include "memory_helper.h"
+#include "globals.h"
 
 #endif //PCH_H

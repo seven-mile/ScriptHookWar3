@@ -5,7 +5,7 @@
 
 #pragma region jass object type
 DECLARE_HANDLE(JassObject);
-typedef JassObject JassPlayer, JassUnit, JassString, JassGroup;
+typedef JassObject JassPlayer, JassUnit, JassString, JassGroup, JassCode, JassTrigger, JassTriggerAction, JassEvent;
 static_assert(sizeof(JassObject) == 4);
 #pragma endregion
 
@@ -35,18 +35,18 @@ union MemPtr
   template<typename T>
   inline constexpr operator T* () { return reinterpret_cast<T*>(pointer); }
   template<typename T>
-  inline constexpr MemPtr& operator=(T* p) { this->pointer = p; return *this; }
+  inline constexpr MemPtr& operator=(const T* p) { this->pointer = const_cast<T*>(p); return *this; }
 };
 
 static_assert(sizeof(MemPtr) == 4);
 #pragma endregion
 
 #pragma region x86 op codes
-#define OP_NOP			0x90
-#define OP_RET			0xC3
-#define OP_CALL			0xE8
-#define OP_JMP			0xE9
-#define OP_JMPSHORT		0xEB
+#define X86_OP_NOP			0x90
+#define X86_OP_RET			0xC3
+#define X86_OP_CALL			0xE8
+#define X86_OP_JMP			0xE9
+#define X86_OP_JMPSHORT		0xEB
 #pragma endregion
 
 
@@ -72,7 +72,7 @@ inline void MemCopy(U p, const T* v, int n) { memcpy((void*)p, v, n); }
 template<typename T, typename U>
 inline void MemJump(U p, const T v, T* r = nullptr)
 {
-  MemWrite<BYTE>(p++, OP_JMP);
+  MemWrite<BYTE>(p++, X86_OP_JMP);
   if (r) *r = (T)(MemRead<DWORD>(p) + p + 4);
   MemWrite<DWORD>(p, ((DWORD)v - (DWORD)p) - 4);
 }
@@ -81,7 +81,7 @@ inline void MemJump(U p, const T v, T* r = nullptr)
 template<typename T, typename U>
 inline void MemCall(U p, const T v, T* r = nullptr)
 {
-  MemWrite<BYTE>(p++, OP_CALL);
+  MemWrite<BYTE>(p++, X86_OP_CALL);
   if (r) *r = (T)(MemRead<DWORD>(p) + p + 4);
   MemWrite<DWORD>(p, (DWORD)v - (DWORD)p - 4);
 }
@@ -93,40 +93,3 @@ inline T MemReadOffsetPtr(U p)
   return (T)((size_t)MemRead<T>(p) + p + sizeof(T));
 }
 #pragma endregion
-
-#pragma region jass string stuff
-template<typename T>
-concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<T, std::string>;
-
-template<simple_string T>
-inline JassString CreateJassString(const T& arg) {
-  MemPtr raw_ptr = nullptr;
-  if constexpr (std::is_convertible_v<T, const char*>) raw_ptr = const_cast<char*>(static_cast<const char*>(arg));
-  else if constexpr (std::is_same_v<T, std::string>) raw_ptr = arg.c_str();
-
-  assert(raw_ptr.address && "Invalid input string to create jass string!");
-
-  MemPtr ptr1 = nullptr, ptr2 = nullptr;
-  ptr1 = new size_t { raw_ptr };
-  ptr2 = new size_t { ptr1.address - 0x1C };
-  ptr2.address -= 0x8;
-
-  return ptr2;
-}
-
-inline const char* UnpackJassString(const JassString& str) {
-  MemPtr p = str, ptr2 = p.address + 0x8;
-  assert(ptr2.address && "Invalid address when accessing JassString handle for the second offset.");
-  MemPtr ptr1 = MemRead(ptr2) + 0x1C;
-  return MemRead<const char*>(ptr1);
-}
-
-inline void DestroyJassString(const JassString& str) {
-  MemPtr p = str, ptr2 = p.address + 0x8;
-  assert(ptr2.address && "Invalid address when accessing JassString handle for the second offset.");
-  MemPtr ptr1 = MemRead(ptr2) + 0x1C;
-  delete ptr1.pointer;
-  delete ptr2.pointer;
-}
-#pragma endregion
-

@@ -96,10 +96,14 @@ xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="helper.h" />
+    <ClInclude Include="war3\func_call.h" />
+    <ClInclude Include="war3\func_callback.h" />
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="war3\hash_table.h" />
+    <ClInclude Include="memory_helper.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="war3.h" />
+    <ClInclude Include="war3\jass_string.h" />
+    <ClInclude Include="war3\native_table.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -107,6 +111,19 @@ xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="war3\func_callback.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="war3\hash_table.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="war3\native_table.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="script.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
