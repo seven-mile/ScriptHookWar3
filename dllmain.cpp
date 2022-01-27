@@ -7,7 +7,37 @@
 
 // Define your custom script in script.cpp!
 // This function will be called periodly, every ~10ms?
-void WINAPI HookFunctionLoop(void);
+void ScriptLoop(void);
+
+void WINAPI HookFunctionLoop(void) {
+  static bool bExec = false;
+  // GetInstance is useful for accessing internal resources
+  // war3.exe#497 for 1.20e
+  static size_t(__fastcall * GetInstance)(int) = reinterpret_cast<decltype(GetInstance)>(GetProcAddress(GetModuleHandle(NULL), MAKEINTRESOURCEA(497)));
+
+  { // Exec Once
+    if (!bExec) {
+      bExec = true;
+
+      if (GetInstance) {
+        MemPtr ptr5 = GetInstance(5);
+        g_pVM = MemRead(MemRead(ptr5.address + 0x90) + 0x4 * 1); // 1 is the first vm index
+        // Get symbol table pointer
+        // 0x2854 for 1.20e, 0x2858 for higher
+        g_pSymTable = reinterpret_cast<decltype(g_pSymTable)>
+          (MemRead(MemRead(g_pVM.address + 0x2854) + 0x8));
+
+        // Get code table relative pointer
+        // *(_DWORD*)(this[2593] + 8) + 4 * v25
+        // 0x2884 for 1.20e, 0x2888 for higher
+        g_pCodeRel = MemRead(MemRead(g_pVM.address + 0x2884) + 0x8);
+        // the native functions access *(struct opcode**)(g_pCodeRel + codeArg)
+      }
+    }
+  }
+
+  ScriptLoop();
+}
 
 DWORD WINAPI ScriptThread(LPVOID) {
   { // Install Hook

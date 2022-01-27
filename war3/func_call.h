@@ -3,17 +3,24 @@
 #include "jass_string.h"
 #include "func_callback.h"
 
+template<typename T>
+concept callable_object = requires(T func) { { func() } -> std::same_as<void>; };
+
 inline void CollectArgs(LPVOID* stackBin, std::vector<std::function<void()>>& deleterBin) {  }
 
 template<typename U, typename... T>
 inline void CollectArgs(LPVOID* stackBin, std::vector<std::function<void()>>& deleterBin, const U& carg, T... rargs) {
   CollectArgs(stackBin + 1, deleterBin, rargs...);
   if constexpr (simple_string<U>) {
-    MemPtr obj = CreateJassString(carg);
-    *stackBin = obj.pointer;
-    deleterBin.push_back([str = obj.handle]() {
+    MemPtr jstr = CreateJassString(carg);
+    *stackBin = jstr.pointer;
+    deleterBin.push_back([str = jstr.handle]() {
       DestroyJassString(str);
     });
+  } else if constexpr (callable_object<U>) {
+    MemPtr obj = CreateJassCallback(carg);
+    *stackBin = obj.pointer;
+    // we cannot destroy it after pushing arguments!
   } else if constexpr (std::is_floating_point_v<U>) {
     auto parg = new float{ static_cast<float>(carg) };
     *stackBin = parg;

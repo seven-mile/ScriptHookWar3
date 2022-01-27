@@ -5,7 +5,10 @@
 
 #pragma region jass object type
 DECLARE_HANDLE(JassObject);
-typedef JassObject JassPlayer, JassUnit, JassString, JassGroup, JassCode, JassTrigger, JassTriggerAction, JassEvent;
+typedef JassObject 
+  JassPlayer, JassUnit, JassString, JassGroup, JassCode,
+  JassTrigger, JassTriggerAction, JassEvent, JassDialog,
+  JassDialogButton;
 static_assert(sizeof(JassObject) == 4);
 #pragma endregion
 

@@ -2,13 +2,18 @@
 #include "../pch.h"
 
 template<typename T>
-concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<T, std::string>;
+concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<typename std::remove_cvref<T>::type, std::string>;
 
 template<simple_string T>
 inline JassString CreateJassString(const T& arg) {
   MemPtr raw_ptr = nullptr;
   if constexpr (std::is_convertible_v<T, const char*>) raw_ptr = const_cast<char*>(static_cast<const char*>(arg));
-  else if constexpr (std::is_same_v<T, std::string>) raw_ptr = arg.c_str();
+  else if constexpr (std::is_same_v<std::remove_cvref<T>::type, std::string>) raw_ptr = arg.c_str();
+  else {
+    []() {
+      static_assert(false, "Invalid input string to create jass string! Check type T:");
+    }();
+  }
 
   assert(raw_ptr.address && "Invalid input string to create jass string!");
 

@@ -2,7 +2,7 @@
 
 ### Install
 
-This is a **ASI Plugin**! You need to install a ASI Loader first, and put the output `ScriptHookWar3.asi` in a proper directory to load it.
+This is an **ASI Plugin**! You need to install an ASI Loader first, and put the output `ScriptHookWar3.asi` in a proper directory to load it.
 
 ### Usage
 
@@ -36,7 +36,23 @@ if (CallFn<bool>("IsUnitType", unit, UNIT_TYPE_HERO)) {
     "ScriptHookWar3: The selected unit is not hero."
   );
 }
+
+
 ```
+
+1.28 update: **C++ Callback is supported!**
+
+```cpp
+auto trg = CallFn<JassTrigger>("CreateTrigger");
+auto act = CallFn<JassTriggerAction>("TriggerAddAction", trg, []() {
+  DebugOutput("ScriptHookWar3: Action triggered!");
+});
+CallFn<JassEvent>("TriggerRegisterPlayerChatEvent", trg, ply, "war", true);
+```
+
+Yes, just pass lambda an it will work!
+
+Oh, you don't need callback arguments, since you already have lambda capturing.
 
 ### Game Version
 
@@ -53,3 +69,5 @@ I will refactor the code recently. The structure is kind of confusing, and perfo
 Now I'm working on providing **C++ function callback binding**. Then you can pass C++ function pointer to a function taking `code`-typed arguments, like `TriggerAddAction`, which provides important event system!
 
 After that, I'm considering write a wrapper for `Dialog`. And maybe OOP wrapper for more jass types, if I'd love to.
+
+1.28 update: They are close to a finish. Now I will try to build a NativeTrainer, which providing similar interface to HKE script inject. But this time the injection happens at runtime and we don't need to modify the map.
