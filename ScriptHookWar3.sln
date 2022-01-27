@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32104.313
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptHookWar3", "ScriptHookWar3.vcxproj", "{AE83BC88-3F9E-49A7-AEA3-831F4D6AE87C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE83BC88-3F9E-49A7-AEA3-831F4D6AE87C}.Debug|x86.ActiveCfg = Debug|Win32
+		{AE83BC88-3F9E-49A7-AEA3-831F4D6AE87C}.Debug|x86.Build.0 = Debug|Win32
+		{AE83BC88-3F9E-49A7-AEA3-831F4D6AE87C}.Release|x86.ActiveCfg = Release|Win32
+		{AE83BC88-3F9E-49A7-AEA3-831F4D6AE87C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A48F1A9E-BA51-453B-BD85-5DCAC53DE4CB}
+	EndGlobalSection
+EndGlobal
