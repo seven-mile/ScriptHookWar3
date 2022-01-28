@@ -5,7 +5,7 @@ template<typename T>
 concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<typename std::remove_cvref<T>::type, std::string>;
 
 template<simple_string T>
-inline JassString CreateJassString(const T& arg) {
+inline HString CreateJassString(const T& arg) {
   MemPtr raw_ptr = nullptr;
   if constexpr (std::is_convertible_v<T, const char*>) raw_ptr = const_cast<char*>(static_cast<const char*>(arg));
   else if constexpr (std::is_same_v<std::remove_cvref<T>::type, std::string>) raw_ptr = arg.c_str();
@@ -25,14 +25,14 @@ inline JassString CreateJassString(const T& arg) {
   return ptr2;
 }
 
-inline const char* UnpackJassString(const JassString& str) {
+inline const char* UnpackJassString(const HString& str) {
   MemPtr p = str, ptr2 = p.address + 0x8;
   assert(ptr2.address && "Invalid address when accessing JassString handle for the second offset.");
   MemPtr ptr1 = MemRead(ptr2) + 0x1C;
   return MemRead<const char*>(ptr1);
 }
 
-inline void DestroyJassString(const JassString& str) {
+inline void DestroyJassString(const HString& str) {
   MemPtr p = str, ptr2 = p.address + 0x8;
   assert(ptr2.address && "Invalid address when accessing JassString handle for the second offset.");
   MemPtr ptr1 = MemRead(ptr2) + 0x1C;

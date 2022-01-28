@@ -1,5 +1,5 @@
 #pragma once
 #include "../pch.h"
 
-JassCode CreateJassCallback(const std::function<void()>& callback);
-void DestroyJassCallback(JassCode code);
+HCode CreateJassCallback(const std::function<void()>& callback);
+void DestroyJassCallback(HCode code);

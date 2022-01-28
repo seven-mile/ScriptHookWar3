@@ -4,12 +4,12 @@
 // Thanks CLEO4 library repo!
 
 #pragma region jass object type
-DECLARE_HANDLE(JassObject);
-typedef JassObject 
-  JassPlayer, JassUnit, JassString, JassGroup, JassCode,
-  JassTrigger, JassTriggerAction, JassEvent, JassDialog,
-  JassDialogButton;
-static_assert(sizeof(JassObject) == 4);
+DECLARE_HANDLE(HObject);
+typedef HObject 
+  HPlayer, HUnit, HString, HGroup, HCode,
+  HTrigger, HTriggerAction, HEvent, HDialog,
+  HDialogButton;
+static_assert(sizeof(HObject) == 4);
 #pragma endregion
 
 
@@ -19,18 +19,18 @@ union MemPtr
 {
   size_t address;
   void* pointer;
-  JassObject handle;
+  HObject handle;
 
   inline constexpr MemPtr(std::nullptr_t) : pointer(nullptr) { }
   inline constexpr MemPtr(void* p) : pointer(p) { }
   inline constexpr MemPtr(size_t a) : address(a) { }
-  inline constexpr MemPtr(const JassObject &o) : handle(o) { }
+  inline constexpr MemPtr(const HObject &o) : handle(o) { }
   inline constexpr operator void* () { return pointer; }
   inline constexpr operator size_t() { return address; }
-  inline constexpr operator JassObject() { return handle; }
+  inline constexpr operator HObject() { return handle; }
   //inline constexpr MemPtr& operator=(void* p) { return *this = p; }
   //inline constexpr MemPtr& operator=(size_t p) { return *this = p; }
-  //inline constexpr MemPtr& operator=(const JassObject &p) { return *this = p; }
+  //inline constexpr MemPtr& operator=(const HObject &p) { return *this = p; }
 
   // conversion to/from any-type pointer
   template<typename T>

@@ -17,5 +17,6 @@
 
 #include "memory_helper.h"
 #include "globals.h"
+#include "war3/enum.h"
 
 #endif //PCH_H

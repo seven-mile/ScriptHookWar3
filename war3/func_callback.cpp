@@ -30,7 +30,7 @@ void InstallNativeCallbackHook() {
   ref = (PROC)HookNativeIsUnitType;
 }
 
-JassCode CreateJassCallback(const std::function<void()>& callback) {
+HCode CreateJassCallback(const std::function<void()>& callback) {
   // always try to install again.
   // todo: only install when the new game loads
   InstallNativeCallbackHook();
@@ -66,7 +66,7 @@ JassCode CreateJassCallback(const std::function<void()>& callback) {
   return MemPtr((MemPtr(bytecodeBuff) - g_pCodeRel.address) / 4).handle;
 }
 
-void DestroyJassCallback(JassCode code) {
+void DestroyJassCallback(HCode code) {
   // todo: create a code list, and destroy all codes when the game resets
   assert(g_pCodeRel && "Invalid code relative base address!");
 

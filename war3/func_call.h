@@ -1,5 +1,6 @@
 #pragma once
 #include "../pch.h"
+#include "native_table.h"
 #include "jass_string.h"
 #include "func_callback.h"
 
@@ -25,11 +26,11 @@ inline void CollectArgs(LPVOID* stackBin, std::vector<std::function<void()>>& de
     auto parg = new float{ static_cast<float>(carg) };
     *stackBin = parg;
     deleterBin.push_back([parg]() { delete parg; });
-  } else if constexpr (std::is_convertible_v<U, INT32>) {
+  } else if constexpr (std::is_convertible_v<U, INT32> || std::is_enum_v<U>) {
     *stackBin = reinterpret_cast<LPVOID>(static_cast<INT32>(carg));
   } else if constexpr (std::is_convertible_v<U, UINT32>) {
     *stackBin = reinterpret_cast<LPVOID>(static_cast<UINT32>(carg));
-  } else if constexpr (std::is_same_v<U, JassObject>) {
+  } else if constexpr (std::is_same_v<U, HObject>) {
     *stackBin = *reinterpret_cast<const LPVOID*>(&carg);
   } else {
     []() {
@@ -90,9 +91,9 @@ R CallFn(const std::string& func_name, T... args) {
       return UnpackJassString(retVal.handle);
     } else if constexpr (std::is_floating_point_v<R>) {
       return static_cast<R>(MemRead<float>(retVal));
-    } else if constexpr (std::is_convertible_v<R, int>) {
-      return retVal.address;
-    } else if constexpr (std::is_same_v<R, JassObject>) {
+    } else if constexpr (std::is_convertible_v<R, int> || std::is_enum_v<R>) {
+      return (R)retVal.address;
+    } else if constexpr (std::is_same_v<R, HObject>) {
       return retVal.handle;
     } else {
       []() {
