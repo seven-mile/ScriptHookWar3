@@ -6,6 +6,8 @@ This is an **ASI Plugin**! You need to install an ASI Loader first, and put the 
 
 ### Usage
 
+#### Calling Jass Native Functions
+
 With the C++ template, ScriptHookWar3 provides a graceful way to call native jass functions:
 
 ```cpp
@@ -40,6 +42,8 @@ if (CallFn<bool>("IsUnitType", unit, UNIT_TYPE_HERO)) {
 
 ```
 
+#### Function Callback
+
 1.28 update: **C++ Callback is supported!**
 
 ```cpp
@@ -50,9 +54,80 @@ auto act = CallFn<JassTriggerAction>("TriggerAddAction", trg, []() {
 CallFn<JassEvent>("TriggerRegisterPlayerChatEvent", trg, ply, "war", true);
 ```
 
-Yes, just pass lambda an it will work!
+Yes, just pass lambda and it will work!
 
 Oh, you don't need callback arguments, since you already have lambda capturing.
+
+#### C++ OOP Wrapper
+
+I wrote some class wrapper for Jass objects, so that you can use
+
+```cpp
+auto ply = JassPlayer::LocalPlayer();
+if (JassHero hero = ply.GetSelectedUnits().FirstUnit()) {
+  hero.SetMoveSpeed(2 * hero.GetMoveSpeed());
+} else {
+  DebugOutput("oops, it is NOT a HERO.");
+}
+```
+
+#### Menu Creator API
+
+It's an extremely powerful shortcut for game menu creation.
+
+The so-called menu is based on game-native dialog and supports ordinary action buttons, switch buttons and navigation between menus.
+
+For example, to create a menu structure like:
+
+```
+Resource
+-- Add Money
+-- Add Lumber
+
+Selected Unit
+-- Scale up / Scale down (change its text and behavior after clicked)
+```
+
+We can simply write
+
+```cpp
+// define your menus
+static ScriptMenu mainMenu, resMenu, unitMenu;
+
+// define main menu layout, there're two submenus
+mainMenu.AddSubMenuButton("Resource", resMenu);
+mainMenu.AddSubMenuButton("Selected Unit", unitMenu);
+// this button exit the menu
+mainMenu.AddActionButton("Exit Menu", [](){});
+
+// define two action buttons
+resMenu.AddActionButton("Add Money", []() {
+    // It's simple, right? I love it.
+    auto ply = JassPlayer::LocalPlayer();
+    ply.SetState(PLAYER_STATE::RESOURCE_GOLD,
+        ply.GetState(PLAYER_STATE::RESOURCE_GOLD) + 9999);
+});
+resMenu.AddActionButton("Add Lumber", []() {
+    auto ply = JassPlayer::LocalPlayer();
+    ply.SetState(PLAYER_STATE::RESOURCE_LUMBER,
+        ply.GetState(PLAYER_STATE::RESOURCE_LUMBER) + 9999);
+});
+// this button return to the previous level
+resMenu.AddSubMenuButton("Return", mainMenu);
+resMenu.AddActionButton("Exit Menu", [](){});
+
+unitMenu.AddSwitchButton("Scale Down", "Scale Up",
+[]() {
+    auto unit = JassPlayer::LocalPlayer().GetSelectedUnits().FirstUnit();
+    unit.SetScale(1.0);
+},
+[]() {
+    auto unit = JassPlayer::LocalPlayer().GetSelectedUnits().FirstUnit();
+    unit.SetScale(2.0);
+});
+unitMenu.AddSubMenuButton("Return", mainMenu);
+unitMenu.AddActionButton("Exit Menu", []() {});
+```
 
 ### Game Version
 
@@ -63,6 +138,8 @@ Anyway, I'm focusing on exploring more features rather than support more version
 ### Coming Refactor
 
 I will refactor the code recently. The structure is kind of confusing, and performance optimization is also needed.
+
+2.7 update: I will probably update this project to C++ 20 Module architecture ;)
 
 ### Todo
 

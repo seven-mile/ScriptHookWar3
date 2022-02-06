@@ -98,6 +98,9 @@ xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="war3\wrapper\ScriptMenu.h" />
+    <ClInclude Include="war3\wrapper\JassHero.h" />
+    <ClInclude Include="war3\wrapper\JassDialog.h" />
     <ClInclude Include="war3\wrapper\JassItem.h" />
     <ClInclude Include="war3\wrapper\JassWidget.h" />
     <ClInclude Include="war3\wrapper\JassUnitGroup.h" />
@@ -117,6 +120,18 @@ xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="war3\wrapper\ScriptMenu.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="war3\wrapper\JassHero.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="war3\wrapper\JassDialog.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="war3\wrapper\JassItem.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>

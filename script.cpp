@@ -6,6 +6,10 @@
 #include "war3/func_call.h"
 #include "war3/jass_helper.h"
 
+#include "war3/wrapper/JassPlayer.h"
+#include "war3/wrapper/JassHero.h"
+#include "war3/wrapper/ScriptMenu.h"
+
 void ScriptLoop(void) {
   auto tickCount = GetTickCount64();
 
@@ -15,24 +19,17 @@ void ScriptLoop(void) {
   const decltype(tickCount) noRespTimeInMs = 100;
   if ((keyState & (1u << 31)) && lastTickCount + noRespTimeInMs < tickCount /* todo: && game is active */) {
     lastTickCount = tickCount;
-    const int PLAYERID_LOCAL = 0;
-    auto ply = CallFn<HPlayer>("Player", PLAYERID_LOCAL);
-    auto grp = CallFn<HGroup>("CreateGroup");
-    CallFn<void>("GroupEnumUnitsSelected", grp, ply, false);
-    auto unit = CallFn<HUnit>("FirstOfGroup", grp);
-    CallFn<void>("ForGroup", grp, []() {
-      const int UNIT_TYPE_HERO = 0;
-      auto unit = CallFn<HUnit>("GetEnumUnit");
-      assert(unit && "Got invalid enum unit!");
-      if (CallFn<bool>("IsUnitType", unit, UNIT_TYPE_HERO)) {
-        CallFn<void>("AddHeroXP", unit, 10000, true);
-        DebugOutput("ScriptHookWar3: Added!");
-      } else {
-        DebugOutput("ScriptHookWar3: The selected unit is not a hero.");
-      }
-    });
-
-
+    
+    // c++ api call
+    //{
+    //  auto ply = JassPlayer::LocalPlayer();
+    //  if (JassHero hero = ply.GetSelectedUnits().FirstUnit()) {
+    //    hero.SetMoveSpeed(2 * hero.GetMoveSpeed());
+    //  } else {
+    //    DebugOutput("oops, it is NOT a HERO.");
+    //  }
+    //}
+    
     // Try add action
     //auto trg = CallFn<HTrigger>("CreateTrigger");
     //auto act1 = CallFn<HTriggerAction>("TriggerAddAction", trg, []() {
@@ -40,22 +37,41 @@ void ScriptLoop(void) {
     //});
     //CallFn<HEvent>("TriggerRegisterPlayerChatEvent", trg, ply, "war", true);
 
-    // Try show in-game dialog box!
-    static HDialog dlg = 0;
-    if (!dlg) {
-      dlg = CallFn<HDialog>("DialogCreate");
-      CallFn<void>("DialogSetMessage", dlg, "ScriptHookWar3\nNative Trainer ver.β\nMain Menu");
-      // Direct Unicode Text Support (Save Source using UTF8)
-      auto btnRes = CallFn<HDialogButton>("DialogAddButton", dlg, "资源", 0);
-      auto btnResTrg = CallFn<HTrigger>("CreateTrigger");
-      auto btnResTrgAct = CallFn<HTriggerAction>("TriggerAddAction", btnResTrg, [ply]() {
-        CallFn<void>("DialogDisplay", ply, dlg, false);
+    static ScriptMenu mainMenu, resMenu, unitMenu;
+    static bool init = false;
+    if (!init) {
+      init = true;
+
+      mainMenu.AddSubMenuButton("资源", resMenu);
+      mainMenu.AddSubMenuButton("单位特殊性", unitMenu);
+      mainMenu.AddActionButton("退出", [](){});
+
+      resMenu.AddActionButton("加9999钱", []() {
+        auto ply = JassPlayer::LocalPlayer();
+        ply.SetState(PLAYER_STATE::RESOURCE_GOLD,
+          ply.GetState(PLAYER_STATE::RESOURCE_GOLD) + 9999);
       });
-      auto btn2 = CallFn<HDialogButton>("DialogAddButton", dlg, "自动化", 0);
-      auto btn3 = CallFn<HDialogButton>("DialogAddButton", dlg, "选定单位特殊性", 0);
-      auto btnClose = CallFn<HDialogButton>("DialogAddButton", dlg, "退出", 0);
-      CallFn<HEvent>("TriggerRegisterDialogButtonEvent", btnResTrg, btnClose);
+      resMenu.AddActionButton("加9999木", []() {
+        auto ply = JassPlayer::LocalPlayer();
+        ply.SetState(PLAYER_STATE::RESOURCE_LUMBER,
+          ply.GetState(PLAYER_STATE::RESOURCE_LUMBER) + 9999);
+      });
+      resMenu.AddSubMenuButton("返回", mainMenu);
+      resMenu.AddActionButton("退出", [](){});
+
+      unitMenu.AddSwitchButton("缩小为正常", "变大为2倍",
+      []() {
+        auto unit = JassPlayer::LocalPlayer().GetSelectedUnits().FirstUnit();
+        unit.SetScale(1.0);
+      },
+      []() {
+        auto unit = JassPlayer::LocalPlayer().GetSelectedUnits().FirstUnit();
+        unit.SetScale(2.0);
+      });
+      unitMenu.AddSubMenuButton("返回", mainMenu);
+      unitMenu.AddActionButton("退出", [](){});
     }
-    CallFn<void>("DialogDisplay", ply, dlg, true);
+
+    mainMenu.Display();
   }
 }
