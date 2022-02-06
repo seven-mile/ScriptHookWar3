@@ -1,7 +1,5 @@
 #include "../../pch.h"
 #include "JassPlayer.h"
-#include "JassUnit.h"
-#include "JassUnitGroup.h"
 #include "../func_call.h"
 
 JassPlayer JassPlayer::EnumPlayer()

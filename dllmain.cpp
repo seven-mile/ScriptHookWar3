@@ -1,9 +1,5 @@
 #include "pch.h"
 #include "war3/jass_string.h"
-#include "war3/hash_table.h"
-#include "war3/native_table.h"
-#include "war3/func_callback.h"
-#include "war3/func_call.h"
 
 // Define your custom script in script.cpp!
 // This function will be called periodly, every ~10ms?

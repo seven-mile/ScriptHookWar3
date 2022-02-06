@@ -1,6 +1,7 @@
 #pragma once
 #include "JassHandle.h"
 #include "../enum.h"
+#include "JassUnitGroup.h"
 
 struct JassPlayer : public JassHandle
 {

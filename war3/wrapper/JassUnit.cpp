@@ -8,6 +8,16 @@ JassUnit::JassUnit(JassPlayer owner, int unitId, float x, float y, float face, b
     isCorpse ? "CreateCorpse" : "CreateUnit",
     unitId, x, y, face)) {  }
 
+JassUnit JassUnit::EnumUnit()
+{
+  return CallFn<HUnit>("GetEnumUnit");
+}
+
+JassUnit JassUnit::FilterUnit()
+{
+  return CallFn<HUnit>("GetFilterUnit");
+}
+
 void JassUnit::Kill()
 {
   CallFn<void>("KillUnit", handle);
@@ -21,6 +31,11 @@ void JassUnit::Remove()
 void JassUnit::SetShow(bool show)
 {
   CallFn<void>("ShowUnit", handle, show);
+}
+
+bool JassUnit::IsType(UNIT_TYPE type)
+{
+  return CallFn<bool>("IsUnitType", handle, type);
 }
 
 RACE JassUnit::GetRace()

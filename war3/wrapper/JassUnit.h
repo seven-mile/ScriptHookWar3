@@ -8,6 +8,9 @@ struct JassUnit : JassWidget
   // create JassUnit
   JassUnit(struct JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse = false);
 
+  static JassUnit EnumUnit();
+  static JassUnit FilterUnit();
+
   // action : management
   void Kill();
   void Remove();
@@ -15,6 +18,8 @@ struct JassUnit : JassWidget
 
   // property : getter/setter
   void SetShow(bool show);
+
+  bool IsType(UNIT_TYPE type);
 
   RACE GetRace();
 

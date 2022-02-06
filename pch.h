@@ -19,4 +19,9 @@
 #include "globals.h"
 #include "war3/enum.h"
 
+// disable static_assert for my MSVC, it seems
+// the new version has a bug on it.
+// if you're not using VC toolset 14.31.31103(VS 17.1 preview5), COMMENT IT!
+#define static_assert(...) 
+
 #endif //PCH_H
