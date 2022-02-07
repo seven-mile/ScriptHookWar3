@@ -258,3 +258,205 @@ enum class ITEM_TYPE {
   UNKNOWN,
   ANY,
 };
+
+// Event Id
+
+//===================================================
+// For use with TriggerRegisterGameEvent    
+//===================================================    
+enum class EVENT_GAME {
+  VICTORY = 0,
+  END_LEVEL = 1,
+
+  VARIABLE_LIMIT = 2,
+  STATE_LIMIT = 3,
+
+  TIMER_EXPIRED = 4,
+
+  ENTER_REGION = 5,
+  LEAVE_REGION = 6,
+
+  TRACKABLE_HIT = 7,
+  TRACKABLE_TRACK = 8,
+
+  SHOW_SKILL = 9,
+  BUILD_SUBMENU = 10,
+
+  LOADED = 256,
+  TOURNAMENT_FINISH_SOON = 257,
+  TOURNAMENT_FINISH_NOW = 258,
+  SAVE = 259,
+};
+
+//===================================================
+// For use with TriggerRegisterPlayerEvent
+//===================================================
+enum class EVENT_PLAYER {
+  STATE_LIMIT = 11,
+  ALLIANCE_CHANGED = 12,
+
+  DEFEAT = 13,
+  VICTORY = 14,
+  LEAVE = 15,
+  CHAT = 16,
+  END_CINEMATIC = 17,
+
+  ARROW_LEFT_DOWN = 261,
+  ARROW_LEFT_UP = 262,
+  ARROW_RIGHT_DOWN = 263,
+  ARROW_RIGHT_UP = 264,
+  ARROW_DOWN_DOWN = 265,
+  ARROW_DOWN_UP = 266,
+  ARROW_UP_DOWN = 267,
+  ARROW_UP_UP = 268,
+};
+
+//===================================================
+// For use with TriggerRegisterPlayerUnitEvent
+//===================================================
+enum class EVENT_PLAYER_UNIT {
+  ATTACKED = 18,
+  RESCUED = 19,
+
+  DEATH = 20,
+  DECAY = 21,
+
+  DETECTED = 22,
+  HIDDEN = 23,
+
+  SELECTED = 24,
+  DESELECTED = 25,
+
+  CONSTRUCT_START = 26,
+  CONSTRUCT_CANCEL = 27,
+  CONSTRUCT_FINISH = 28,
+
+  UPGRADE_START = 29,
+  UPGRADE_CANCEL = 30,
+  UPGRADE_FINISH = 31,
+
+  TRAIN_START = 32,
+  TRAIN_CANCEL = 33,
+  TRAIN_FINISH = 34,
+
+  RESEARCH_START = 35,
+  RESEARCH_CANCEL = 36,
+  RESEARCH_FINISH = 37,
+  ISSUED_ORDER = 38,
+  ISSUED_POINT_ORDER = 39,
+  ISSUED_TARGET_ORDER = 40,
+  ISSUED_UNIT_ORDER = 40,    // for compat
+
+  SUMMON = 47,
+  DROP_ITEM = 48,
+  PICKUP_ITEM = 49,
+  USE_ITEM = 50,
+
+  LOADED = 51,
+
+  SELL = 269,
+  CHANGE_OWNER = 270,
+  SELL_ITEM = 271,
+  SPELL_CHANNEL = 272,
+  SPELL_CAST = 273,
+  SPELL_EFFECT = 274,
+  SPELL_FINISH = 275,
+  SPELL_ENDCAST = 276,
+  PAWN_ITEM = 277,
+};
+
+enum class EVENT_PLAYER_HERO {
+  LEVEL = 41,
+  SKILL = 42,
+
+  REVIVABLE = 43,
+
+  REVIVE_START = 44,
+  REVIVE_CANCEL = 45,
+  REVIVE_FINISH = 46,
+};
+
+//===================================================
+// For use with TriggerRegisterUnitEvent
+//===================================================
+
+enum class EVENT_UNIT {
+  DAMAGED = 52,
+  DEATH = 53,
+  DECAY = 54,
+  DETECTED = 55,
+  HIDDEN = 56,
+  SELECTED = 57,
+  DESELECTED = 58,
+
+  STATE_LIMIT = 59,
+
+  // Events which may have a filter for the "other unit"              
+  //                                                                  
+  ACQUIRED_TARGET = 60,
+  TARGET_IN_RANGE = 61,
+  ATTACKED = 62,
+  RESCUED = 63,
+
+  CONSTRUCT_CANCEL = 64,
+  CONSTRUCT_FINISH = 65,
+
+  UPGRADE_START = 66,
+  UPGRADE_CANCEL = 67,
+  UPGRADE_FINISH = 68,
+
+  // Events which involve the specified unit performing               
+  // training of other units                                          
+  //                                                                  
+  TRAIN_START = 69,
+  TRAIN_CANCEL = 70,
+  TRAIN_FINISH = 71,
+
+  RESEARCH_START = 72,
+  RESEARCH_CANCEL = 73,
+  RESEARCH_FINISH = 74,
+
+  ISSUED_ORDER = 75,
+  ISSUED_POINT_ORDER = 76,
+  ISSUED_TARGET_ORDER = 77,
+
+  HERO_LEVEL = 78,
+  HERO_SKILL = 79,
+
+  SUMMON = 84,
+
+  DROP_ITEM = 85,
+  PICKUP_ITEM = 86,
+  USE_ITEM = 87,
+
+  LOADED = 88,
+
+  SELL = 286,
+  CHANGE_OWNER = 287,
+  SELL_ITEM = 288,
+  SPELL_CHANNEL = 289,
+  SPELL_CAST = 290,
+  SPELL_EFFECT = 291,
+  SPELL_FINISH = 292,
+  SPELL_ENDCAST = 293,
+  PAWN_ITEM = 294,
+};
+
+enum class EVENT_HERO {
+  HERO_REVIVABLE = 80,
+  HERO_REVIVE_START = 81,
+  HERO_REVIVE_CANCEL = 82,
+  HERO_REVIVE_FINISH = 83,
+};
+
+enum class EVENT_WIDGET {
+  DEATH = 89,
+};
+
+enum class EVENT_DIALOG_BUTTON {
+  CLICK = 90,
+};
+
+enum class EVENT_DIALOG {
+  CLICK = 91,
+};
