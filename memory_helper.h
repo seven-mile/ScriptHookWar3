@@ -8,7 +8,7 @@ DECLARE_HANDLE(HObject);
 typedef HObject 
   HPlayer, HUnit, HString, HGroup, HCode,
   HTrigger, HTriggerAction, HEvent, HDialog,
-  HDialogButton;
+  HDialogButton, HLocation;
 static_assert(sizeof(HObject) == 4);
 #pragma endregion
 
