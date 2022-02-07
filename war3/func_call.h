@@ -90,7 +90,7 @@ R CallFn(const std::string& func_name, T... args) {
     if constexpr (simple_string<R>) {
       return UnpackJassString(retVal.handle);
     } else if constexpr (std::is_floating_point_v<R>) {
-      return static_cast<R>(MemRead<float>(retVal));
+      return static_cast<R>(MemRead<float>(&retVal));
     } else if constexpr (std::is_convertible_v<R, int> || std::is_enum_v<R>) {
       return (R)retVal.address;
     } else if constexpr (std::is_same_v<R, HObject>) {
