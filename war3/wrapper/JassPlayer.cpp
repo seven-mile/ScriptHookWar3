@@ -32,95 +32,102 @@ JassPlayer JassPlayer::NeutralAggressive()
   return CallFn<HPlayer>("Player", PLAYER_ID::NEUTRAL_AGGRESSIVE);
 }
 
-void JassPlayer::SetTechResearchLevel(int techCode, int level)
+const JassPlayer& JassPlayer::SetTechResearchLevel(int techCode, int level) const
 {
   CallFn<void>("SetPlayerTechResearched", handle, techCode, level);
+  return *this;
 }
 
-bool JassPlayer::GetTechResearchState(int techCode)
+bool JassPlayer::GetTechResearchState(int techCode) const
 {
   return CallFn<bool>("GetPlayerTechResearched", handle, techCode);
 }
 
-std::string JassPlayer::GetName()
+std::string JassPlayer::GetName() const
 {
   return CallFn<const char*>("GetPlayerName", handle);
 }
 
-void JassPlayer::SetName(std::string const& name)
+const JassPlayer& JassPlayer::SetName(std::string const& name) const
 {
   CallFn<void>("SetPlayerName", handle, name.c_str());
+  return *this;
 }
 
-PLAYER_COLOR JassPlayer::GetColor()
+PLAYER_COLOR JassPlayer::GetColor() const
 {
   return CallFn<PLAYER_COLOR>("SetPlayerRace", handle);
 }
 
-void JassPlayer::SetColor(PLAYER_COLOR const& color)
+const JassPlayer& JassPlayer::SetColor(PLAYER_COLOR const& color) const
 {
   CallFn<void>("SetPlayerColor", handle, color);
+  return *this;
 }
 
-int JassPlayer::GetState(PLAYER_STATE const& state)
+int JassPlayer::GetState(PLAYER_STATE const& state) const
 {
   return CallFn<int>("GetPlayerState", handle, state);
 }
 
-void JassPlayer::SetState(PLAYER_STATE const& state, int value)
+const JassPlayer& JassPlayer::SetState(PLAYER_STATE const& state, int value) const
 {
   CallFn<void>("SetPlayerState", handle, state, value);
+  return *this;
 }
 
-float JassPlayer::GetHandicapHP()
+float JassPlayer::GetHandicapHP() const
 {
   return CallFn<float>("GetPlayerHandicap", handle);
 }
 
-void JassPlayer::SetHandicapHP(float handicap_hp)
+const JassPlayer& JassPlayer::SetHandicapHP(float handicap_hp) const
 {
   CallFn<void>("SetPlayerHandicap", handle, handicap_hp);
+  return *this;
 }
 
-float JassPlayer::GetHandicapXP()
+float JassPlayer::GetHandicapXP() const
 {
   return CallFn<float>("GetPlayerHandicapXP", handle);
 }
 
-void JassPlayer::SetHandicapXP(float handicap_xp)
+const JassPlayer& JassPlayer::SetHandicapXP(float handicap_xp) const
 {
   CallFn<void>("SetPlayerHandicapXP", handle, handicap_xp);
+  return *this;
 }
 
-RACE JassPlayer::GetRace()
+RACE JassPlayer::GetRace() const
 {
   return CallFn<RACE>("GetPlayerRace", handle);
 }
 
-int JassPlayer::GetTeam()
+int JassPlayer::GetTeam() const
 {
   return CallFn<int>("GetPlayerTeam", handle);
 }
 
-JassUnitGroup JassPlayer::GetAllUnits()
+JassUnitGroup JassPlayer::GetAllUnits() const
 {
   auto grp = CallFn<HGroup>("CreateGroup");
   CallFn<void>("GroupEnumUnitsOfPlayer", grp, handle, 0);
   return grp;
 }
 
-JassUnitGroup JassPlayer::GetSelectedUnits()
+JassUnitGroup JassPlayer::GetSelectedUnits() const
 {
   auto grp = CallFn<HGroup>("CreateGroup");
   CallFn<void>("GroupEnumUnitsSelected", grp, handle, 0);
   return grp;
 }
 
-void JassPlayer::DisplayText(std::string const& text, float duration, float x, float y)
+const JassPlayer& JassPlayer::DisplayText(std::string const& text, float duration, float x, float y) const
 {
   if (fabs(duration) < 1e-7) {
     CallFn<void>("DisplayTextToPlayer", handle, x, y, text.c_str());
   } else {
     CallFn<void>("DisplayTimedTextToPlayer", handle, x, y, duration, text.c_str());
   }
+  return *this;
 }

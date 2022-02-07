@@ -17,35 +17,35 @@ struct JassPlayer : public JassHandle
   static JassPlayer NeutralAggressive();
   
   // property : getter/setter
-  void SetTechResearchLevel(int techCode, int level);
-  bool GetTechResearchState(int techCode);
+  const JassPlayer& SetTechResearchLevel(int techCode, int level) const;
+  bool GetTechResearchState(int techCode) const;
 
-  std::string GetName();
-  void SetName(std::string const& name);
+  std::string GetName() const;
+  const JassPlayer& SetName(std::string const& name) const;
 
-  PLAYER_COLOR GetColor();
-  void SetColor(PLAYER_COLOR const& color);
+  PLAYER_COLOR GetColor() const;
+  const JassPlayer& SetColor(PLAYER_COLOR const& color) const;
 
-  int GetState(PLAYER_STATE const& state);
-  void SetState(PLAYER_STATE const& state, int value);
+  int GetState(PLAYER_STATE const& state) const;
+  const JassPlayer& SetState(PLAYER_STATE const& state, int value) const;
 
-  // transform: normal_hp *= handicap_hp;
-  float GetHandicapHP();
-  void SetHandicapHP(float handicap_hp);
+  // transform: normal_hp *= handicap_hp const;
+  float GetHandicapHP() const;
+  const JassPlayer& SetHandicapHP(float handicap_hp) const;
 
-  // transform: normal_xp *= handicap_xp;
-  float GetHandicapXP();
-  void SetHandicapXP(float handicap_xp);
+  // transform: normal_xp *= handicap_xp const;
+  float GetHandicapXP() const;
+  const JassPlayer& SetHandicapXP(float handicap_xp) const;
 
-  RACE GetRace();
+  RACE GetRace() const;
 
-  int GetTeam();
+  int GetTeam() const;
 
-  struct JassUnitGroup GetAllUnits();
-  struct JassUnitGroup GetSelectedUnits();
+  struct JassUnitGroup GetAllUnits() const;
+  struct JassUnitGroup GetSelectedUnits() const;
 
-  void DisplayText(std::string const& text, float duration = 10.0f,
-    float x = 0.0f, float y = 0.0f);
+  const JassPlayer& DisplayText(std::string const& text, float duration = 10.0f,
+    float x = 0.0f, float y = 0.0f) const;
 
 };
 

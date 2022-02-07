@@ -6,51 +6,58 @@ struct JassUnit : JassWidget
 {
   JassUnit(HUnit handle) : JassWidget(handle) {  }
   // create JassUnit
-  JassUnit(struct JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse = false);
+  static JassUnit Create(struct JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse = false);
 
+  static JassUnit TriggerUnit();
   static JassUnit EnumUnit();
   static JassUnit FilterUnit();
 
   // action : management
-  void Kill();
-  void Remove();
+  const JassUnit& Kill() const;
+  const JassUnit& Remove() const;
+  const JassUnit& ResetCooldown() const;
 
+  const JassUnit& IssueOrder(std::string const&order) const;
+  const JassUnit& IssueOrder(int orderId) const;
+
+  const JassUnit& SetConstructionProgress(int percentage) const;
+  const JassUnit& SetUpgradeProgress(int percentage) const;
 
   // property : getter/setter
-  void SetShow(bool show);
+  const JassUnit& SetShow(bool show) const;
 
-  bool IsType(UNIT_TYPE type);
+  bool IsType(UNIT_TYPE type) const;
 
-  RACE GetRace();
+  RACE GetRace() const;
 
-  void SetState(UNIT_STATE const& state, float value);
-  float GetState(UNIT_STATE const& state);
+  const JassUnit& SetState(UNIT_STATE const& state, float value) const;
+  float GetState(UNIT_STATE const& state) const;
 
-  void SetOwner(struct JassPlayer owner, bool changeColor = true);
-  struct JassPlayer GetOwner();
+  const JassUnit& SetOwner(struct JassPlayer owner, bool changeColor = true) const;
+  struct JassPlayer GetOwner() const;
 
-  void SetColor(PLAYER_COLOR const& color);
-  PLAYER_COLOR GetColor();
+  const JassUnit& SetColor(PLAYER_COLOR const& color) const;
+  PLAYER_COLOR GetColor() const;
 
-  void SetX(float x);
-  float GetX();
-  void SetY(float y);
-  float GetY();
-  void SetPosition(float x, float y);
+  const JassUnit& SetX(float x) const;
+  float GetX() const;
+  const JassUnit& SetY(float y) const;
+  float GetY() const;
+  const JassUnit& SetPosition(float x, float y) const;
 
-  void SetFacing(float facing);
-  float GetFacing();
+  const JassUnit& SetFacing(float facing) const;
+  float GetFacing() const;
 
-  void SetMoveSpeed(float speed);
-  float GetMoveSpeed();
+  const JassUnit& SetMoveSpeed(float speed) const;
+  float GetMoveSpeed() const;
 
-  void SetTurnSpeed(float speed);
-  float GetTurnSpeed();
+  const JassUnit& SetTurnSpeed(float speed) const;
+  float GetTurnSpeed() const;
 
-  void SetFlyHeight(float height);
-  float GetFlyHeight();
+  const JassUnit& SetFlyHeight(float height) const;
+  float GetFlyHeight() const;
 
-  void SetScale(float scale);
-  float GetScale();
+  const JassUnit& SetScale(float scale) const;
+  float GetScale() const;
 };
 

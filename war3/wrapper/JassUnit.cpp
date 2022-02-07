@@ -3,10 +3,16 @@
 #include "JassPlayer.h"
 #include "../func_call.h"
 
-JassUnit::JassUnit(JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse) 
-  : JassWidget(CallFn<HUnit>(
+JassUnit JassUnit::Create(JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse) {
+  return CallFn<HUnit>(
     isCorpse ? "CreateCorpse" : "CreateUnit",
-    unitId, x, y, face)) {  }
+    unitId, x, y, face);
+}
+
+JassUnit JassUnit::TriggerUnit()
+{
+  return CallFn<HUnit>("GetTriggerUnit");
+}
 
 JassUnit JassUnit::EnumUnit()
 {
@@ -18,132 +24,176 @@ JassUnit JassUnit::FilterUnit()
   return CallFn<HUnit>("GetFilterUnit");
 }
 
-void JassUnit::Kill()
+const JassUnit& JassUnit::Kill() const
 {
   CallFn<void>("KillUnit", handle);
+  return *this;
 }
 
-void JassUnit::Remove()
+const JassUnit& JassUnit::Remove() const
 {
   CallFn<void>("RemoveUnit", handle);
+  return *this;
 }
 
-void JassUnit::SetShow(bool show)
+const JassUnit& JassUnit::ResetCooldown() const
+{
+  CallFn<void>("UnitResetCooldown", handle);
+  return *this;
+}
+
+const JassUnit& JassUnit::IssueOrder(std::string const& order) const
+{
+  CallFn<bool>("IssueImmediateOrder", handle, order.c_str());
+  return *this;
+}
+
+const JassUnit& JassUnit::IssueOrder(int orderId) const
+{
+  CallFn<bool>("IssueImmediateOrderById", handle, orderId);
+  return *this;
+}
+
+const JassUnit& JassUnit::SetConstructionProgress(int percentage) const
+{
+  CallFn<void>("UnitSetConstructionProgress", handle, percentage);
+  return *this;
+}
+
+const JassUnit& JassUnit::SetUpgradeProgress(int percentage) const
+{
+  CallFn<void>("UnitSetUpgradeProgress", handle, percentage);
+  return *this;
+}
+
+const JassUnit& JassUnit::SetShow(bool show) const
 {
   CallFn<void>("ShowUnit", handle, show);
+  return *this;
 }
 
-bool JassUnit::IsType(UNIT_TYPE type)
+bool JassUnit::IsType(UNIT_TYPE type) const
 {
   return CallFn<bool>("IsUnitType", handle, type);
 }
 
-RACE JassUnit::GetRace()
+RACE JassUnit::GetRace() const
 {
   return CallFn<RACE>("GetUnitRace", handle);
 }
 
-void JassUnit::SetState(UNIT_STATE const& state, float value)
+const JassUnit& JassUnit::SetState(UNIT_STATE const& state, float value) const
 {
   CallFn<void>("SetUnitState", handle, (size_t)state, value);
+  return *this;
 }
 
-float JassUnit::GetState(UNIT_STATE const& state)
+float JassUnit::GetState(UNIT_STATE const& state) const
 {
   return CallFn<float>("GetUnitState", handle, (size_t)state);
 }
 
-void JassUnit::SetOwner(JassPlayer owner, bool changeColor)
+const JassUnit& JassUnit::SetOwner(JassPlayer owner, bool changeColor) const
 {
   CallFn<void>("SetUnitOwner", handle, owner.handle, changeColor);
+  return *this;
 }
 
-JassPlayer JassUnit::GetOwner()
+JassPlayer JassUnit::GetOwner() const
 {
   return CallFn<HPlayer>("GetOwningPlayer", handle);
 }
 
-void JassUnit::SetColor(PLAYER_COLOR const& color)
+const JassUnit& JassUnit::SetColor(PLAYER_COLOR const& color) const
 {
   CallFn<void>("SetUnitColor", handle, (size_t)color);
+  return *this;
 }
 
-PLAYER_COLOR JassUnit::GetColor()
+PLAYER_COLOR JassUnit::GetColor() const
 {
   return CallFn<PLAYER_COLOR>("GetUnitColor", handle);
 }
 
-void JassUnit::SetX(float x)
+const JassUnit& JassUnit::SetX(float x) const
 {
   CallFn<void>("SetUnitX", handle, x);
+  return *this;
 }
 
-float JassUnit::GetX()
+float JassUnit::GetX() const
 {
   return CallFn<float>("GetUnitX", handle);
 }
 
-void JassUnit::SetY(float y)
+const JassUnit& JassUnit::SetY(float y) const
 {
   CallFn<void>("SetUnitY", handle, y);
+  return *this;
 }
 
-float JassUnit::GetY()
+float JassUnit::GetY() const
 {
   return CallFn<float>("GetUnitY", handle);
 }
 
-void JassUnit::SetPosition(float x, float y)
+const JassUnit& JassUnit::SetPosition(float x, float y) const
 {
   this->SetX(x), this->SetY(y);
+  return *this;
 }
 
-void JassUnit::SetFacing(float facing)
+const JassUnit& JassUnit::SetFacing(float facing) const
 {
   CallFn<void>("SetUnitFacing", handle, facing);
+  return *this;
 }
 
-float JassUnit::GetFacing()
+float JassUnit::GetFacing() const
 {
   return CallFn<float>("GetUnitFacing", handle);
 }
 
-void JassUnit::SetMoveSpeed(float speed)
+const JassUnit& JassUnit::SetMoveSpeed(float speed) const
 {
   CallFn<void>("SetUnitMoveSpeed", handle, speed);
+  return *this;
 }
 
-float JassUnit::GetMoveSpeed()
+float JassUnit::GetMoveSpeed() const
 {
   return CallFn<float>("GetUnitMoveSpeed", handle);
 }
 
-void JassUnit::SetTurnSpeed(float speed)
+const JassUnit& JassUnit::SetTurnSpeed(float speed) const
 {
   CallFn<void>("SetUnitTurnSpeed", handle, speed);
+  return *this;
 }
 
-float JassUnit::GetTurnSpeed()
+float JassUnit::GetTurnSpeed() const
 {
   return CallFn<float>("GetUnitTurnSpeed", handle);
 }
 
-void JassUnit::SetFlyHeight(float height)
+const JassUnit& JassUnit::SetFlyHeight(float height) const
 {
   CallFn<void>("SetUnitFlyHeight", handle, height);
+  return *this;
 }
 
-float JassUnit::GetFlyHeight()
+float JassUnit::GetFlyHeight() const
 {
   return CallFn<float>("GetUnitFlyHeight", handle);
 }
 
-void JassUnit::SetScale(float scale)
+const JassUnit& JassUnit::SetScale(float scale) const
 {
   CallFn<void>("SetUnitScale", handle, scale);
+  return *this;
 }
 
-float JassUnit::GetScale()
+float JassUnit::GetScale() const
 {
   return CallFn<float>("GetUnitScale", handle);
 }
