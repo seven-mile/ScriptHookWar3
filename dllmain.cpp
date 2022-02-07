@@ -73,8 +73,18 @@ BOOL APIENTRY DllMain(
 {
   if (ul_reason_for_call == DLL_PROCESS_ATTACH)
   {
+    {
+      wchar_t fileName[MAX_PATH]{};
+      GetModuleFileName(GetModuleHandle(NULL), fileName, MAX_PATH);
+      if (!std::wstring(fileName).ends_with(L"war3.exe")) {
+        // not war3.exe, maybe worldedit, stop injecting
+        return FALSE;
+      }
+    }
+
     // Unprotect the module NOW
     auto hExecutableInstance = (size_t)GetModuleHandle(NULL);
+
     IMAGE_NT_HEADERS* ntHeader = (IMAGE_NT_HEADERS*)(hExecutableInstance + ((IMAGE_DOS_HEADER*)hExecutableInstance)->e_lfanew);
     SIZE_T size = ntHeader->OptionalHeader.SizeOfImage;
     DWORD oldProtect;
