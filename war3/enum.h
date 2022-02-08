@@ -259,6 +259,12 @@ enum class ITEM_TYPE {
   ANY,
 };
 
+enum class FOG_STATE {
+  MASKED = 1,
+  FOGGED = 2,
+  VISIBLE = 4,
+};
+
 // Event Id
 
 //===================================================

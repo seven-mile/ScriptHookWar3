@@ -4,9 +4,12 @@
 #include "../func_call.h"
 
 JassUnit JassUnit::Create(JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse) {
-  return CallFn<HUnit>(
-    isCorpse ? "CreateCorpse" : "CreateUnit",
-    unitId, x, y, face);
+  return CallFn<HUnit>(isCorpse ? "CreateCorpse" : "CreateUnit", owner.handle, unitId, x, y, face);
+}
+
+JassUnit JassUnit::Create(JassPlayer owner, int unitId, HLocation location, float face)
+{
+  return CallFn<HUnit>("CreateUnitAtLoc", owner.handle, unitId, location, face);
 }
 
 JassUnit JassUnit::TriggerUnit()
@@ -77,9 +80,36 @@ bool JassUnit::IsType(UNIT_TYPE type) const
   return CallFn<bool>("IsUnitType", handle, type);
 }
 
+const JassUnit& JassUnit::AddType(UNIT_TYPE type) const
+{
+  CallFn<void>("UnitAddType", handle, type);
+  return *this;
+}
+
+const JassUnit& JassUnit::RemoveType(UNIT_TYPE type) const
+{
+  CallFn<void>("UnitRemoveType", handle, type);
+  return *this;
+}
+
+int JassUnit::GetTypeId() const
+{
+  return CallFn<int>("GetUnitTypeId", handle);
+}
+
 RACE JassUnit::GetRace() const
 {
   return CallFn<RACE>("GetUnitRace", handle);
+}
+
+int JassUnit::GetLevel() const
+{
+    return CallFn<int>("GetUnitLevel", handle);
+}
+
+HLocation JassUnit::GetRallyPoint() const
+{
+  return CallFn<HLocation>("GetUnitRallyPoint", handle);
 }
 
 const JassUnit& JassUnit::SetState(UNIT_STATE const& state, float value) const

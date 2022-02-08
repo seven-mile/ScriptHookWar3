@@ -6,6 +6,16 @@ This is an **ASI Plugin**! You need to install an ASI Loader first, and put the 
 
 ### Usage
 
+#### Use NativeTrainer Directly
+
+I've implemented a NativeTrainer, which is similar to HKE script.
+
+To open trainer main menu, just press F5. And you can easily understand how to enable features in it.
+
+To make a building that you are constructing complete right now, press arrow left key (<-).
+
+That's all, enjoy!
+
 #### Calling Jass Native Functions
 
 With the C++ template, ScriptHookWar3 provides a graceful way to call native jass functions:

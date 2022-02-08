@@ -6,9 +6,9 @@
 #pragma region jass object type
 DECLARE_HANDLE(HObject);
 typedef HObject 
-  HPlayer, HUnit, HString, HGroup, HCode,
-  HTrigger, HTriggerAction, HEvent, HDialog,
-  HDialogButton, HLocation;
+  HPlayer, HUnit, HItem, HWidget, HString, HGroup, HCode,
+  HTrigger, HTriggerAction, HEvent, HDialog, HAbility,
+  HDialogButton, HLocation, HFogModifier, HRect;
 static_assert(sizeof(HObject) == 4);
 #pragma endregion
 

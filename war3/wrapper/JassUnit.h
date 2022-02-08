@@ -7,6 +7,7 @@ struct JassUnit : JassWidget
   JassUnit(HUnit handle) : JassWidget(handle) {  }
   // create JassUnit
   static JassUnit Create(struct JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse = false);
+  static JassUnit Create(struct JassPlayer owner, int unitId, HLocation location, float face);
 
   static JassUnit TriggerUnit();
   static JassUnit EnumUnit();
@@ -26,9 +27,19 @@ struct JassUnit : JassWidget
   // property : getter/setter
   const JassUnit& SetShow(bool show) const;
 
+  // for UNIT_TYPE enum, rather than unit type id such as 'hpea'
   bool IsType(UNIT_TYPE type) const;
+  const JassUnit& AddType(UNIT_TYPE type) const;
+  const JassUnit& RemoveType(UNIT_TYPE type) const;
+
+  // unit type id such as 'hpea', rather than UNIT_TYPE
+  int GetTypeId() const;
 
   RACE GetRace() const;
+
+  int GetLevel() const;
+
+  HLocation GetRallyPoint() const;
 
   const JassUnit& SetState(UNIT_STATE const& state, float value) const;
   float GetState(UNIT_STATE const& state) const;
