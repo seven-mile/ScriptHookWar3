@@ -22,12 +22,13 @@ size_t __cdecl HookNativeIsUnitType(size_t arg1, size_t arg2, char* func_name) {
 }
 
 void InstallNativeCallbackHook() {
-  RegenerateFunctionMap();
-  auto& ref = mapFunc["IsUnitType"]->fnAddr;
+  auto pNode = GetNativeFuncNode("IsUnitType");
+  assert(pNode && "Failed to install native call back hook!");
+
   if (!OriginalHookNativeFunc.address) {
-    OriginalHookNativeFunc = ref;
+    OriginalHookNativeFunc = pNode->fnAddr;
   }
-  ref = (PROC)HookNativeIsUnitType;
+  pNode->fnAddr = (PROC)HookNativeIsUnitType;
 }
 
 HCode CreateJassCallback(const std::function<void()>& callback) {

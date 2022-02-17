@@ -7,11 +7,24 @@
 // This function will be called periodly, every ~10ms?
 void ScriptLoop(void);
 
-void WINAPI HookFunctionLoop(void) {
-  static bool bExec = false;
+inline MemPtr GetGInsFunc() {
   // GetInstance is useful for accessing internal resources
   // war3.exe#497 for 1.20e
-  static size_t(__fastcall * GetInstance)(int) = reinterpret_cast<decltype(GetInstance)>(GetProcAddress(::GetModuleHandle(NULL), MAKEINTRESOURCEA(497)));
+  // 1.20e : Game.dll + AE5C
+  // 1.24e : Game.dll + 4C3FD0
+  if (g_gameVersion == GameVersion::V120E) {
+    return GetProcAddress(::GetModuleHandle(NULL), MAKEINTRESOURCEA(497));
+  } else if (g_gameVersion == GameVersion::V124E) {
+    return MemPtr(GetModuleHandle(L"Game.dll")).address + 0x4C3FD0;
+  } else {
+    assert(false && "Invalid Game Version!");
+    return nullptr;
+  }
+}
+
+void WINAPI HookFunctionLoop(void) {
+  static bool bExec = false;
+  static size_t(__fastcall * GetInstance)(int) = reinterpret_cast<decltype(GetInstance)>(GetGInsFunc().address);
 
   { // Exec Once
     if (!bExec) {

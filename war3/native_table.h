@@ -4,12 +4,13 @@
 // 1.20e
 /* internal call stack construction information storage
 grammar:
-Hxxx; -> handle
-B     -> boolean
-R     -> real
-S     -> string (special handle)
-I     -> integer
-V     -> void
+Hxxx; -> handle   7
+B     -> boolean  8
+C     -> code     3
+R     -> real     5
+S     -> string   6
+I     -> integer  4
+V     -> void     0
 
 function_name1 [function_names...] ( [argument_type_list] ) return_type ;
 (align 4 bytes using spaces)
@@ -25,10 +26,10 @@ struct JassFnRegNode {
   char* protoStr;
   UINT32 argNameArrCount, argNameArrNonNullCount;
   _Maybenull_  char** fnArgNames; // c_str array
-  UINT32 unused5, unused6;
+  UINT32 unused5, retType;
 };
 
 static_assert(sizeof(JassFnRegNode) == 60);
 
-extern std::unordered_map<std::string, JassFnRegNode*> mapFunc;
-void RegenerateFunctionMap();
+extern void RegenerateFuncMap();
+extern JassFnRegNode* GetNativeFuncNode(const char* name);

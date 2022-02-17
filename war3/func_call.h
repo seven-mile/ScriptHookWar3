@@ -50,21 +50,8 @@ R CallFn(const std::string& func_name, T... args) {
   *std::rbegin(stackBin) = const_cast<char*>(func_name.c_str());
 
   // call
-  auto itRes = mapFunc.find(func_name);
-  LPVOID fnPtr = nullptr;
-  if (itRes != mapFunc.end())
-    fnPtr = itRes->second->fnAddr;
-  else {
-    // wait 50ms and try once again
-    Sleep(50);
-    RegenerateFunctionMap();
-    itRes = mapFunc.find(func_name);
-    if (itRes != mapFunc.end())
-      fnPtr = itRes->second->fnAddr;
-    else {
-      assert(false && "Cannot find specified jass function!");
-    }
-  }
+  LPVOID fnPtr = GetNativeFuncNode(func_name.c_str())->fnAddr;
+  assert(fnPtr && "Cannot find specified jass function!");
 
   MemPtr argsPtr = nullptr;
   MemPtr retVal = nullptr;
