@@ -69,7 +69,9 @@
     </Link>
     <PostBuildEvent>
       <Command>del /Q "D:\GeneralResearch\Warcraft III Classic\$(TargetFileName)"
-xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
+xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"
+del /Q "D:\GeneralResearch\Warcraft III Frozen Throne\$(TargetFileName)"
+xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Frozen Throne"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,7 +96,9 @@ xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
     </Link>
     <PostBuildEvent>
       <Command>del /Q "D:\GeneralResearch\Warcraft III Classic\$(TargetFileName)"
-xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"</Command>
+xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Classic"
+del /Q "D:\GeneralResearch\Warcraft III Frozen Throne\$(TargetFileName)"
+xcopy "$(TargetPath)" "D:\GeneralResearch\Warcraft III Frozen Throne"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
