@@ -31,5 +31,4 @@ struct JassFnRegNode {
 
 static_assert(sizeof(JassFnRegNode) == 60);
 
-extern void RegenerateFuncMap();
 extern JassFnRegNode* GetNativeFuncNode(const char* name);

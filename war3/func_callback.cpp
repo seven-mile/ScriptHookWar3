@@ -9,19 +9,35 @@ std::unordered_map<size_t, std::function<void()>> callbackMap;
 
 // my hook native
 constexpr int HOOK_NATIVE_CALLBACK_MAGIC = 0x3f3f3f3f;
-size_t __cdecl HookNativeIsUnitType(size_t arg1, size_t arg2, char* func_name) {
+size_t __cdecl HookNativeIsUnitType(size_t arg1, size_t arg2) {
   if (arg2 == HOOK_NATIVE_CALLBACK_MAGIC) {
     callbackMap[arg1]();
     return 0;
   } else {
     // return CallFn<bool>("IsUnitType", arg1, arg2);
     assert(OriginalHookNativeFunc);
-    return reinterpret_cast<size_t(__cdecl*)(size_t, size_t, char*)>
-      (OriginalHookNativeFunc.address)(arg1, arg2, func_name);
+    return reinterpret_cast<size_t(__cdecl*)(size_t, size_t)>
+      (OriginalHookNativeFunc.address)(arg1, arg2);
   }
 }
 
 void InstallNativeCallbackHook() {
+
+  static bool initedRegCheat = false;
+  if (!initedRegCheat) {
+    initedRegCheat = true;
+    if (g_gameVersion == GameVersion::V124E) {
+      // hack reg availability
+      // 1. set vm + 0x48 to 0
+      // 2. ignore unavailablity [selected]
+      // Game.dll+45F288 - 75 05 - jne Game.dll+45F28F
+      // Game.dll+45F288 - EB 05 - jmp Game.dll+45F28F
+
+      MemPtr jneAsmcode{ (size_t)GetModuleHandle(L"Game.dll") + 0x45F288 };
+      MemWrite<char>(jneAsmcode, 0xEB);
+    }
+  }
+
   auto pNode = GetNativeFuncNode("IsUnitType");
   assert(pNode && "Failed to install native call back hook!");
 
@@ -50,13 +66,13 @@ HCode CreateJassCallback(const std::function<void()>& callback) {
   */
   auto bytecodeBuff = new size_t[]{
     0,
-    0x13010000, 0x00000000,
-    0x0C010400, callbackTopCount,
-    0x13010000, 0x00000000,
-    0x0C010400, HOOK_NATIVE_CALLBACK_MAGIC,
-    0x13010000, 0x00000000,
+    0x13C10000, 0x00000000,
+    0x0CC10400, callbackTopCount,
+    0x13C10000, 0x00000000,
+    0x0CC10400, HOOK_NATIVE_CALLBACK_MAGIC,
+    0x13C10000, 0x00000000,
     0x15000000, hookNativeFuncId,
-    0x14010000, 0x00000000,
+    0x14C10000, 0x00000000,
     0x27000000, 0x00000000,
     0x04000000, 0x00000000,
   };

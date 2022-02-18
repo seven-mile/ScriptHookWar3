@@ -2,21 +2,6 @@
 #include "native_table.h"
 #include "hash_table.h"
 
-//std::unordered_map<std::string, JassFnRegNode*> *pMap = nullptr;
-
-void RegenerateFuncMap() {
-  if (g_gameVersion == GameVersion::V120E) {
-    // do nothing
-  } else if (g_gameVersion == GameVersion::V124E) {
-    //delete pMap;
-    //using map_t = decltype(*pMap);
-    //pMap = new map_t{};
-    
-  } else {
-    assert(false && "Invalid game version");
-  }
-}
-
 JassFnRegNode* GetNativeFuncNode(const char* name) {
   //auto res = g_pSymTable->find(name);
   //if (!res) return nullptr;
