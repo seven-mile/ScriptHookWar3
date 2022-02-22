@@ -18,7 +18,7 @@ function_name1 [function_names...] ( [argument_type_list] ) return_type ;
 
 struct JassFnRegNode {
   LPVOID vtable;
-  UINT32 unused1, unused2, unused3, unused4;
+  UINT32 hash_, unused2, unused3, unused4;
   _Maybenull_ JassFnRegNode* nxtNode;
   char* fnName;
   PROC fnAddr;

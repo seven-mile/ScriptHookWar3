@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "war3/jass_string.h"
 
 #pragma comment(lib, "version.lib")
 
@@ -7,47 +6,7 @@
 // This function will be called periodly, every ~10ms?
 void ScriptLoop(void);
 
-inline MemPtr GetGInsFunc() {
-  // GetInstance is useful for accessing internal resources
-  // war3.exe#497 for 1.20e
-  // 1.20e : Game.dll + AE5C
-  // 1.24e : Game.dll + 4C3FD0
-  if (g_gameVersion == GameVersion::V120E) {
-    return GetProcAddress(::GetModuleHandle(NULL), MAKEINTRESOURCEA(497));
-  } else if (g_gameVersion == GameVersion::V124E) {
-    return MemPtr(GetModuleHandle(L"Game.dll")).address + 0x4C3FD0;
-  } else {
-    assert(false && "Invalid Game Version!");
-    return nullptr;
-  }
-}
-
 void WINAPI HookFunctionLoop(void) {
-  static bool bExec = false;
-  static size_t(__fastcall * GetInstance)(int) = reinterpret_cast<decltype(GetInstance)>(GetGInsFunc().address);
-
-  { // Exec Once
-    if (!bExec) {
-      bExec = true;
-
-      if (GetInstance) {
-        MemPtr ptr5 = GetInstance(5);
-        g_pVM = MemRead(MemRead(ptr5.address + 0x90) + 0x4 * 1); // 1 is the first vm index
-        // Get symbol table pointer
-        // 0x2854 for 1.20e, 0x2858 for higher
-        const int offset = g_gameVersion > GameVersion::V120E ? 4 : 0;
-        g_pSymTable = reinterpret_cast<decltype(g_pSymTable)>
-          (MemRead(MemRead(g_pVM.address + 0x2854 + offset) + 0x8));
-
-        // Get code table relative pointer
-        // *(_DWORD*)(this[2593] + 8) + 4 * v25
-        // 0x2884 for 1.20e, 0x2888 for higher
-        g_pCodeRel = MemRead(MemRead(g_pVM.address + 0x2884 + offset) + 0x8);
-        // the native functions access *(struct opcode**)(g_pCodeRel + codeArg)
-      }
-    }
-  }
-
   ScriptLoop();
 }
 
@@ -55,13 +14,15 @@ DWORD WINAPI ScriptThread(LPVOID) {
   { // Install Hook
     size_t hGameModule = 0;
     while (!hGameModule) {
-      hGameModule = (size_t)::GetModuleHandle(L"Game.dll");
+      hGameModule = reinterpret_cast<size_t>(::GetModuleHandle(L"Game.dll"));
       Sleep(50);
     }
     { // Get Game Version
       
       WCHAR gamePath[1024];
-      ::GetModuleFileName((HMODULE)hGameModule, gamePath, _countof(gamePath));
+      ::GetModuleFileName(
+        reinterpret_cast<HMODULE>(hGameModule),
+        gamePath, _countof(gamePath));
       DWORD dwHandle{};
       DWORD dwVerSize = ::GetFileVersionInfoSize(gamePath, &dwHandle);
       if (!dwVerSize) {
@@ -116,11 +77,11 @@ DWORD WINAPI ScriptThread(LPVOID) {
       }
     }
     { // Unprotect the game.dll module
-      IMAGE_NT_HEADERS* ntHeader = (IMAGE_NT_HEADERS*)(hGameModule + ((IMAGE_DOS_HEADER*)hGameModule)->e_lfanew);
+      auto ntHeader = (IMAGE_NT_HEADERS*)(hGameModule + ((IMAGE_DOS_HEADER*)hGameModule)->e_lfanew);
       SIZE_T size = ntHeader->OptionalHeader.SizeOfImage;
       
       DWORD oldProtect;
-      VirtualProtect((VOID*)hGameModule, size, PAGE_EXECUTE_READWRITE, &oldProtect);
+      VirtualProtect((LPVOID)hGameModule, size, PAGE_EXECUTE_READWRITE, &oldProtect);
     }
 
     /* 1.20e as example
@@ -173,7 +134,7 @@ BOOL APIENTRY DllMain(
     // Unprotect the module NOW
     auto hExecutableInstance = (size_t)::GetModuleHandle(NULL);
 
-    IMAGE_NT_HEADERS* ntHeader = (IMAGE_NT_HEADERS*)(hExecutableInstance + ((IMAGE_DOS_HEADER*)hExecutableInstance)->e_lfanew);
+    auto ntHeader = (IMAGE_NT_HEADERS*)(hExecutableInstance + ((IMAGE_DOS_HEADER*)hExecutableInstance)->e_lfanew);
     SIZE_T size = ntHeader->OptionalHeader.SizeOfImage;
     DWORD oldProtect;
     ::VirtualProtect((VOID*)hExecutableInstance, size, PAGE_EXECUTE_READWRITE, &oldProtect);
