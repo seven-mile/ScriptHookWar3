@@ -2,7 +2,7 @@
 #include "../pch.h"
 
 template<typename T>
-concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<typename std::remove_cvref<T>::type, std::string>;
+concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<std::remove_cvref_t<T>, std::string>;
 
 inline std::unordered_map<std::string, HString> g_string_cache;
 

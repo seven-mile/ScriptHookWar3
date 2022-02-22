@@ -19,15 +19,16 @@ inline bool IsKeyDown(int code) {
 void ScriptLoop(void) {
   auto tickCount = GetTickCount64();
   static decltype(tickCount) lastTickCount = 0;
-  const decltype(tickCount) noRespTimeInMs = 100;
+  constexpr decltype(tickCount) noRespTimeInMs = 100;
 
   // Activate Cheat Menu
   if (IsKeyDown(VK_F5) && lastTickCount + noRespTimeInMs < tickCount) {
     lastTickCount = tickCount;
 
-    static ScriptMenu mainMenu, resMenu, unitMenu, unit2Menu;
+    static ScriptMenu mainMenu;
     static bool init = false;
     if (!init) {
+      static ScriptMenu resMenu, unitMenu, unit2Menu;
       init = true;
       
       mainMenu.AddSubMenuButton("资源", resMenu);

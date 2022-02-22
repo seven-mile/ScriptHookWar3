@@ -114,13 +114,13 @@ HLocation JassUnit::GetRallyPoint() const
 
 const JassUnit& JassUnit::SetState(UNIT_STATE const& state, float value) const
 {
-  CallFn<void>("SetUnitState", handle, (size_t)state, value);
+  CallFn<void>("SetUnitState", handle, static_cast<size_t>(state), value);
   return *this;
 }
 
 float JassUnit::GetState(UNIT_STATE const& state) const
 {
-  return CallFn<float>("GetUnitState", handle, (size_t)state);
+  return CallFn<float>("GetUnitState", handle, static_cast<size_t>(state));
 }
 
 const JassUnit& JassUnit::SetOwner(JassPlayer owner, bool changeColor) const
@@ -136,7 +136,7 @@ JassPlayer JassUnit::GetOwner() const
 
 const JassUnit& JassUnit::SetColor(PLAYER_COLOR const& color) const
 {
-  CallFn<void>("SetUnitColor", handle, (size_t)color);
+  CallFn<void>("SetUnitColor", handle, static_cast<size_t>(color));
   return *this;
 }
 

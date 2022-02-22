@@ -4,7 +4,7 @@
 
 struct JassUnit : JassWidget
 {
-  JassUnit(HUnit handle) : JassWidget(handle) {  }
+  JassUnit(const HUnit handle) : JassWidget(handle) {  }
   // create JassUnit
   static JassUnit Create(struct JassPlayer owner, int unitId, float x, float y, float face, bool isCorpse = false);
   static JassUnit Create(struct JassPlayer owner, int unitId, HLocation location, float face);
@@ -40,7 +40,7 @@ struct JassUnit : JassWidget
   int GetLevel() const;
 
   HLocation GetRallyPoint() const;
-
+  
   const JassUnit& SetState(UNIT_STATE const& state, float value) const;
   float GetState(UNIT_STATE const& state) const;
 

@@ -31,7 +31,7 @@ inline void CollectArgs(LPVOID* stackBin, std::vector<std::function<void()>>& de
   } else if constexpr (std::is_convertible_v<U, UINT32>) {
     *stackBin = reinterpret_cast<LPVOID>(static_cast<UINT32>(carg));
   } else if constexpr (std::is_same_v<U, HObject>) {
-    *stackBin = *reinterpret_cast<const LPVOID*>(&carg);
+    *stackBin = *reinterpret_cast<LPVOID*>(const_cast<U*>(&carg));
   } else {
     []() {
       static_assert(false, "Invalid arg type provided for CallFn! Check type U:");
@@ -50,7 +50,7 @@ R CallFn(const std::string& func_name, T... args) {
   *std::rbegin(stackBin) = const_cast<char*>(func_name.c_str());
 
   // call
-  LPVOID fnPtr = GetNativeFuncNode(func_name.c_str())->fnAddr;
+  auto fnPtr = reinterpret_cast<LPVOID>(GetNativeFuncNode(func_name.c_str())->fnAddr);
   assert(fnPtr && "Cannot find specified jass function!");
 
   MemPtr argsPtr = nullptr;
