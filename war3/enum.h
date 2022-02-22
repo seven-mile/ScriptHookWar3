@@ -469,7 +469,7 @@ enum class EVENT_DIALOG {
 
 
 // Order Ids
-enum ORDER_ID {
+enum class ORDER_ID {
   absorb = 852529,
   acidbomb = 852662,
   acolyteharvest = 852185,

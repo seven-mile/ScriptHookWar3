@@ -18,8 +18,8 @@ struct JassUnit : JassWidget
   const JassUnit& Remove() const;
   const JassUnit& ResetCooldown() const;
 
-  const JassUnit& IssueOrder(std::string const&order) const;
-  const JassUnit& IssueOrder(int orderId) const;
+  const JassUnit& IssueOrder(std::string const& order) const;
+  const JassUnit& IssueOrder(ORDER_ID orderId) const;
 
   const JassUnit& SetConstructionProgress(int percentage) const;
   const JassUnit& SetUpgradeProgress(int percentage) const;

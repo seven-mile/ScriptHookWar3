@@ -51,7 +51,7 @@ const JassUnit& JassUnit::IssueOrder(std::string const& order) const
   return *this;
 }
 
-const JassUnit& JassUnit::IssueOrder(int orderId) const
+const JassUnit& JassUnit::IssueOrder(ORDER_ID orderId) const
 {
   CallFn<bool>("IssueImmediateOrderById", handle, orderId);
   return *this;
