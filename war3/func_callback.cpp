@@ -89,5 +89,5 @@ void DestroyJassCallback(HCode code) {
 
   auto bytecodeBuff = g_pCodeRel.address + 4 * MemPtr(code).address;
   callbackMap.erase(bytecodeBuff + 4 * sizeof(size_t));
-  delete reinterpret_cast<void*>(bytecodeBuff);
+  delete[] reinterpret_cast<size_t*>(bytecodeBuff);
 }
