@@ -1,5 +1,7 @@
 #pragma once
 #include "../pch.h"
+#include <ranges>
+#include <algorithm>
 
 template<typename T>
 concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<std::remove_cvref_t<T>, std::string>;
@@ -13,8 +15,8 @@ inline HString CreateJassString(const T& arg) {
   }
 
   MemPtr raw_ptr = nullptr;
-  if constexpr (std::is_convertible_v<T, const char*>) raw_ptr = const_cast<char*>(static_cast<const char*>(arg));
-  else if constexpr (std::is_same_v<std::remove_cvref<T>::type, std::string>) raw_ptr = arg.c_str();
+  if constexpr (std::is_convertible_v<T, const char*>) raw_ptr = static_cast<const char*>(arg);
+  else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::string>) raw_ptr = arg.c_str();
   else {
     []() {
       static_assert(false, "Invalid input string to create jass string! Check type T:");
@@ -47,6 +49,11 @@ inline void DestroyJassString(const HString& str) {
   // erase the cache key
   g_string_cache.erase(MemRead<const char*>(ptr1));
 
-  delete ptr1.pointer;
-  delete ptr2.pointer;
+  delete static_cast<size_t*>(ptr1.pointer);
+  delete static_cast<size_t*>(ptr2.pointer);
+}
+
+inline void ResetJassString()
+{
+  std::ranges::for_each(g_string_cache | std::views::values, DestroyJassString);
 }

@@ -6,6 +6,7 @@
 struct ScriptMenu
 {
   ScriptMenu& Clear();
+  ScriptMenu& Reset();
   ScriptMenu& Display(JassPlayer ply = JassPlayer::LocalPlayer());
   ScriptMenu& AddActionButton(str text, cbt clickEvent);
   ScriptMenu& AddSwitchButton(std::string onText, std::string offText,

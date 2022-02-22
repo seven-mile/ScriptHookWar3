@@ -6,10 +6,16 @@
 
 ScriptMenu& ScriptMenu::Clear()
 {
-  dialog.Clear();
   for (auto z : list)
     delete z;
   list.clear();
+  return *this;
+}
+
+ScriptMenu& ScriptMenu::Reset()
+{
+  this->Clear();
+  this->dialog = JassDialog::Create();
   return *this;
 }
 

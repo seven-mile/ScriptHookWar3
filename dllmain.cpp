@@ -4,9 +4,17 @@
 
 // Define your custom script in script.cpp!
 // This function will be called periodly, every ~10ms?
+void ScriptInit(void);
 void ScriptLoop(void);
 
 void WINAPI HookFunctionLoop(void) {
+  static bool init = false;
+  if (!init)
+  {
+    init = true;
+    ScriptInit();
+  }
+
   ScriptLoop();
 }
 

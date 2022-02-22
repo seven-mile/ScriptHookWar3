@@ -14,6 +14,7 @@
 #include <functional>
 #include <type_traits>
 #include <format>
+#include <map>
 
 #include "memory_helper.h"
 #include "globals.h"

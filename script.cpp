@@ -12,28 +12,29 @@
 #include "war3/wrapper/ScriptMenu.h"
 #include "war3/wrapper/JassContext.h"
 
-inline bool IsKeyDown(int code) {
-  return GetAsyncKeyState(code) & (1u << 31);
-}
+#include "keyboard_manager.h"
 
-void ScriptLoop(void) {
-  auto tickCount = GetTickCount64();
-  static decltype(tickCount) lastTickCount = 0;
-  constexpr decltype(tickCount) noRespTimeInMs = 100;
+void ScriptInit(void) {
+  // F5 -> display menu
+  static ScriptMenu mainMenu, resMenu, unitMenu, unit2Menu;
+  static bool init = false;
 
-  // Activate Cheat Menu
-  if (IsKeyDown(VK_F5) && lastTickCount + noRespTimeInMs < tickCount) {
-    lastTickCount = tickCount;
+  static auto ResetScriptMenu = []() {
+    init = false;
+    mainMenu.Reset();
+    resMenu.Reset();
+    unitMenu.Reset();
+    unit2Menu.Reset();
+  };
 
-    static ScriptMenu mainMenu;
-    static bool init = false;
+  KeyboardManager::Register([]()
+  {
     if (!init) {
-      static ScriptMenu resMenu, unitMenu, unit2Menu;
       init = true;
-      
+
       mainMenu.AddSubMenuButton("资源", resMenu);
       mainMenu.AddSubMenuButton("单位特殊性", unitMenu);
-      mainMenu.AddActionButton("退出", [](){});
+      mainMenu.AddActionButton("退出", []() {});
 
       { // Map Visiblity
         auto fogMod = CallFn<HFogModifier>(
@@ -43,14 +44,14 @@ void ScriptLoop(void) {
           JCtx::GetWorldBounds(),
           true,
           false
-        );
+          );
 
         resMenu.AddSwitchButton("关闭地图", "打开地图",
-        [=]() {
+          [=]() {
           CallFn<void>("FogModifierStop", fogMod);
           resMenu.Display();
         },
-        [=]() {
+          [=]() {
           CallFn<void>("FogModifierStart", fogMod);
           resMenu.Display();
         });
@@ -99,7 +100,7 @@ void ScriptLoop(void) {
       }
 
       resMenu.AddSubMenuButton("返回", mainMenu);
-      resMenu.AddActionButton("退出", [](){});
+      resMenu.AddActionButton("退出", []() {});
 
       { // auto full unit state
         auto trgLife = JassTrigger::CreateForPlayerUnitsEvent(
@@ -113,15 +114,15 @@ void ScriptLoop(void) {
         trgMana.SetIsEnabled(false).AddAction([]() {
           auto unit = JassUnit::TriggerUnit();
           unit.SetState(UNIT_STATE::MANA, unit.GetState(UNIT_STATE::MAX_MANA))
-              .ResetCooldown();
+            .ResetCooldown();
         });
-        unitMenu.AddSwitchButton("取消全部己方单位无敌", "全部己方单位无敌", 
-        [=]() {
+        unitMenu.AddSwitchButton("取消全部己方单位无敌", "全部己方单位无敌",
+          [=]() {
           trgLife.SetIsEnabled(false);
           trgMana.SetIsEnabled(false);
           unitMenu.Display();
         },
-        [=]() {
+          [=]() {
           trgLife.SetIsEnabled(true);
           trgMana.SetIsEnabled(true);
           unitMenu.Display();
@@ -139,8 +140,8 @@ void ScriptLoop(void) {
         });
 
         unitMenu.AddSwitchButton("关闭P闪", "开启P闪",
-        [=]() { trg.SetIsEnabled(false); unitMenu.Display(); },
-        [=]() { trg.SetIsEnabled(true);  unitMenu.Display(); });
+          [=]() { trg.SetIsEnabled(false); unitMenu.Display(); },
+          [=]() { trg.SetIsEnabled(true);  unitMenu.Display(); });
       }
 
       unitMenu.AddSubMenuButton("下一页", unit2Menu);
@@ -176,8 +177,8 @@ void ScriptLoop(void) {
           if (JassHero hero = unit) {
             constexpr int value = 998244353;
             hero.SetStrength(value)
-                .SetAgility(value)
-                .SetIntelligence(value);
+              .SetAgility(value)
+              .SetIntelligence(value);
           }
         });
         unit2Menu.Display();
@@ -191,5 +192,17 @@ void ScriptLoop(void) {
     }
 
     mainMenu.Display();
-  }
+  }, VK_F5);
+
+  // F4 -> reset menu
+  KeyboardManager::Register([]() {
+    ResetScriptMenu();
+    ResetJassCallback();
+    ResetJassString();
+  }, VK_F4);
+}
+
+void ScriptLoop(void)
+{
+  KeyboardManager::Check();
 }

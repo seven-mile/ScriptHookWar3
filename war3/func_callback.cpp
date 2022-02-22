@@ -86,3 +86,9 @@ void DestroyJassCallback(HCode code) {
   callbackMap.erase(bytecodeBuff + 4 * sizeof(size_t));
   delete[] reinterpret_cast<size_t*>(bytecodeBuff);
 }
+
+void ResetJassCallback()
+{
+  callbackMap.clear();
+  callbackTopCount = 0;
+}
