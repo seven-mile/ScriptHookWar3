@@ -33,9 +33,7 @@ inline void CollectArgs(LPVOID* stackBin, std::vector<std::function<void()>>& de
   } else if constexpr (std::is_same_v<U, HObject>) {
     *stackBin = *reinterpret_cast<LPVOID*>(const_cast<U*>(&carg));
   } else {
-    []() {
-      static_assert(false, "Invalid arg type provided for CallFn! Check type U:");
-    }();
+    static_assert_no_match("Invalid arg type provided for CallFn! Check type U:");
   }
 }
 
@@ -84,7 +82,7 @@ R CallFn(const std::string& func_name, T... args) {
       return retVal.handle;
     } else {
       []() {
-        static_assert(false, "Invalid return type provided for CallFn! Check type R:");
+        static_assert_no_match("Invalid return type provided for CallFn! Check type R:");
       }();
     }
   }

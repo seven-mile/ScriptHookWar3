@@ -19,7 +19,7 @@ inline HString CreateJassString(const T& arg) {
   else if constexpr (std::is_same_v<std::remove_cvref_t<T>, std::string>) raw_ptr = arg.c_str();
   else {
     []() {
-      static_assert(false, "Invalid input string to create jass string! Check type T:");
+      static_assert_no_match("Invalid input string to create jass string! Check type T:");
     }();
   }
 
