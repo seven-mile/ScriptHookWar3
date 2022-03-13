@@ -5,6 +5,7 @@
 #include "war3/func_callback.h"
 #include "war3/func_call.h"
 #include "war3/jass_helper.h"
+#include "war3/game_end_event.h"
 
 #include "war3/wrapper/JassPlayer.h"
 #include "war3/wrapper/JassHero.h"
@@ -12,25 +13,43 @@
 #include "war3/wrapper/ScriptMenu.h"
 #include "war3/wrapper/JassContext.h"
 
+
 #include "keyboard_manager.h"
 
 void ScriptInit(void) {
   // F5 -> display menu
-  static ScriptMenu mainMenu, resMenu, unitMenu, unit2Menu;
+  static ScriptMenu* pMainMenu{ nullptr }, * pResMenu{ nullptr }, * pUnitMenu{ nullptr }, * pUnit2Menu{ nullptr };
   static bool init = false;
 
-  static auto ResetScriptMenu = []() {
+  // discard return value
+  RegisterGameEndEvent([]() {
     init = false;
-    mainMenu.Reset();
-    resMenu.Reset();
-    unitMenu.Reset();
-    unit2Menu.Reset();
-  };
+    if (pMainMenu) pMainMenu->Clear();
+    if (pResMenu) pResMenu->Clear();
+    if (pUnitMenu) pUnitMenu->Clear();
+    if (pUnit2Menu) pUnit2Menu->Clear();
+    delete pMainMenu;
+    delete pResMenu;
+    delete pUnitMenu;
+    delete pUnit2Menu;
+    pMainMenu = nullptr;
+    pResMenu = nullptr;
+    pUnitMenu = nullptr;
+    pUnit2Menu = nullptr;
+  });
 
   KeyboardManager::Register([]()
   {
     if (!init) {
       init = true;
+      pMainMenu = new ScriptMenu{};
+      pResMenu = new ScriptMenu{};
+      pUnitMenu = new ScriptMenu{};
+      pUnit2Menu = new ScriptMenu{};
+      ScriptMenu &mainMenu = *pMainMenu,
+                 &resMenu = *pResMenu,
+                 &unitMenu = *pUnitMenu,
+                 &unit2Menu = *pUnit2Menu;
 
       mainMenu.AddSubMenuButton("资源", resMenu);
       mainMenu.AddSubMenuButton("单位特殊性", unitMenu);
@@ -46,23 +65,21 @@ void ScriptInit(void) {
           false
           );
 
-        resMenu.AddSwitchButton("关闭地图", "打开地图",
-          [=]() {
+        resMenu.AddSwitchButton("关闭地图", "打开地图", [=]() {
           CallFn<void>("FogModifierStop", fogMod);
           resMenu.Display();
-        },
-          [=]() {
+        }, [=]() {
           CallFn<void>("FogModifierStart", fogMod);
           resMenu.Display();
         });
       }
-      resMenu.AddActionButton("加100000钱", []() {
+      resMenu.AddActionButton("加100000钱", [=]() {
         auto ply = JassPlayer::LocalPlayer();
         ply.SetState(PLAYER_STATE::RESOURCE_GOLD,
           ply.GetState(PLAYER_STATE::RESOURCE_GOLD) + 100000);
         resMenu.Display();
       });
-      resMenu.AddActionButton("加100000木", []() {
+      resMenu.AddActionButton("加100000木", [=]() {
         auto ply = JassPlayer::LocalPlayer();
         ply.SetState(PLAYER_STATE::RESOURCE_LUMBER,
           ply.GetState(PLAYER_STATE::RESOURCE_LUMBER) + 100000);
@@ -149,13 +166,13 @@ void ScriptInit(void) {
       unitMenu.AddSubMenuButton("返回主菜单", mainMenu);
       unitMenu.AddActionButton("退出", []() {});
 
-      unit2Menu.AddActionButton("控制所选单位", []() {
+      unit2Menu.AddActionButton("控制所选单位", [=]() {
         auto ply = JassPlayer::LocalPlayer();
         ply.GetSelectedUnits()
           .ForEach([=](JassUnit unit) { unit.SetOwner(ply); unit2Menu.Display(); });
       });
 
-      unit2Menu.AddActionButton("复制所选单位", []() {
+      unit2Menu.AddActionButton("复制所选单位", [=]() {
         auto ply = JassPlayer::LocalPlayer();
         ply.GetSelectedUnits().ForEach([=](JassUnit unit) {
           auto new_unit = JassUnit::Create(
@@ -172,7 +189,7 @@ void ScriptInit(void) {
         unit2Menu.Display();
       });
 
-      unit2Menu.AddActionButton("增加所选英雄无敌三围", []() {
+      unit2Menu.AddActionButton("增加所选英雄无敌三围", [=]() {
         JassPlayer::LocalPlayer().GetSelectedUnits().ForEach([](JassUnit unit) {
           if (JassHero hero = unit) {
             constexpr int value = 998244353;
@@ -191,15 +208,8 @@ void ScriptInit(void) {
 
     }
 
-    mainMenu.Display();
+    pMainMenu->Display();
   }, VK_F5);
-
-  // F4 -> reset menu
-  KeyboardManager::Register([]() {
-    ResetScriptMenu();
-    ResetJassCallback();
-    ResetJassString();
-  }, VK_F4);
 }
 
 void ScriptLoop(void)

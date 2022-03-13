@@ -12,14 +12,7 @@ ScriptMenu& ScriptMenu::Clear()
   return *this;
 }
 
-ScriptMenu& ScriptMenu::Reset()
-{
-  this->Clear();
-  this->dialog = JassDialog::Create();
-  return *this;
-}
-
-ScriptMenu& ScriptMenu::Display(JassPlayer ply)
+ScriptMenu const& ScriptMenu::Display(JassPlayer ply) const
 {
   dialog.Display(ply);
   return *this;

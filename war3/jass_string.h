@@ -3,6 +3,8 @@
 #include <ranges>
 #include <algorithm>
 
+#include "game_end_event.h"
+
 template<typename T>
 concept simple_string = std::is_convertible_v<T, const char*> || std::is_same_v<std::remove_cvref_t<T>, std::string>;
 
@@ -10,6 +12,15 @@ inline std::unordered_map<std::string, HString> g_string_cache;
 
 template<simple_string T>
 inline HString CreateJassString(const T& arg) {
+
+  static bool run_once = false;
+  if (!run_once) {
+    run_once = true;
+    RegisterGameEndEvent([]() {
+      g_string_cache.clear();
+    });
+  }
+
   if (g_string_cache.count(arg)) {
     return g_string_cache[arg];
   }
@@ -51,9 +62,4 @@ inline void DestroyJassString(const HString& str) {
 
   delete static_cast<size_t*>(ptr1.pointer);
   delete static_cast<size_t*>(ptr2.pointer);
-}
-
-inline void ResetJassString()
-{
-  std::ranges::for_each(g_string_cache | std::views::values, DestroyJassString);
 }

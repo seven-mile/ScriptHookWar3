@@ -7,12 +7,12 @@ JassDialog JassDialog::Create()
   return CallFn<HDialog>("DialogCreate");
 }
 
-void JassDialog::Destroy()
+void JassDialog::Destroy() const
 {
   CallFn<void>("DialogDestroy", handle);
 }
 
-JassDialog& JassDialog::Clear()
+JassDialog const& JassDialog::Clear() const
 {
   CallFn<void>("DialogClear", handle);
 
@@ -27,19 +27,19 @@ JassDialog& JassDialog::Clear()
   return *this;
 }
 
-JassDialog& JassDialog::SetText(std::string const& text)
+JassDialog const& JassDialog::SetText(std::string const& text) const
 {
   CallFn<void>("DialogSetMessage", handle, text.c_str());
   return *this;
 }
 
-JassDialog& JassDialog::AddButton(std::string const& text, int hotkey)
+JassDialog const& JassDialog::AddButton(std::string const& text, int hotkey)
 {
   CallFn<HDialogButton>("DialogAddButton", handle, text.c_str(), hotkey);
   return *this;
 }
 
-JassDialog& JassDialog::AddButton(std::string const& text, std::function<void()> const& callback, int hotkey)
+JassDialog const& JassDialog::AddButton(std::string const& text, std::function<void()> const& callback, int hotkey)
 {
   auto btn = CallFn<HDialogButton>("DialogAddButton", handle, text.c_str(), hotkey);
   auto btnTrg = CallFn<HTrigger>("CreateTrigger");
@@ -51,12 +51,12 @@ JassDialog& JassDialog::AddButton(std::string const& text, std::function<void()>
   return *this;
 }
 
-void JassDialog::Display(JassPlayer ply)
+void JassDialog::Display(JassPlayer ply) const
 {
   CallFn<void>("DialogDisplay", ply.handle, handle, true);
 }
 
-void JassDialog::Hide(JassPlayer ply)
+void JassDialog::Hide(JassPlayer ply) const
 {
   CallFn<void>("DialogDisplay", ply.handle, handle, false);
 }

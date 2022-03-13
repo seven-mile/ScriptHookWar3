@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "war3/game_end_event.h"
 
 #pragma comment(lib, "version.lib")
 
@@ -8,6 +9,7 @@ void ScriptInit(void);
 void ScriptLoop(void);
 
 void WINAPI HookFunctionLoop(void) {
+
   static bool init = false;
   if (!init)
   {
@@ -19,7 +21,7 @@ void WINAPI HookFunctionLoop(void) {
 }
 
 DWORD WINAPI ScriptThread(LPVOID) {
-  { // Install Hook
+  {
     size_t hGameModule = 0;
     while (!hGameModule) {
       hGameModule = reinterpret_cast<size_t>(::GetModuleHandle(L"Game.dll"));
@@ -40,7 +42,7 @@ DWORD WINAPI ScriptThread(LPVOID) {
           L"We only support 1.20e and 1.24e\n"
           L"But you can continue the game without the plugin.",
           L"ScriptHookWar3", MB_ICONERROR);
-        return HRESULT_FROM_WIN32(GetLastError());
+        return HRESULT_FROM_WIN32(::GetLastError());
       }
       auto pBuffer = new BYTE[dwVerSize];
       if (!::GetFileVersionInfo(gamePath, 0, dwVerSize, pBuffer)) {
@@ -50,7 +52,7 @@ DWORD WINAPI ScriptThread(LPVOID) {
           L"We only support 1.20e and 1.24e\n"
           L"But you can continue the game without the plugin.",
           L"ScriptHookWar3", MB_ICONERROR);
-        return HRESULT_FROM_WIN32(GetLastError());
+        return HRESULT_FROM_WIN32(::GetLastError());
       }
       UINT nQuerySize;
       VS_FIXEDFILEINFO* pVsffi;
@@ -63,7 +65,7 @@ DWORD WINAPI ScriptThread(LPVOID) {
           L"We only support 1.20e and 1.24e\n"
           L"But you can continue the game without the plugin.",
           L"ScriptHookWar3", MB_ICONERROR);
-        return HRESULT_FROM_WIN32(GetLastError());
+        return HRESULT_FROM_WIN32(::GetLastError());
       }
       
       DWORD A = HIWORD(pVsffi->dwProductVersionMS),
@@ -92,6 +94,10 @@ DWORD WINAPI ScriptThread(LPVOID) {
       VirtualProtect((LPVOID)hGameModule, size, PAGE_EXECUTE_READWRITE, &oldProtect);
     }
 
+    // install game end event hook
+    InitGameEndEvent();
+
+    // install time update loop hook
     /* 1.20e as example
     * game.dll+4dd90:
     * mov dword ptr ds:[game.dll+85FF20], ecx
@@ -113,8 +119,6 @@ DWORD WINAPI ScriptThread(LPVOID) {
       return HRESULT_FROM_WIN32(ERROR_UNSUPPORTED_TYPE);
     }
 
-    //constexpr int codeLen = 7;
-    //BYTE codes[codeLen];
     MemCall(codePtr.address, HookFunctionLoop);
     constexpr int callInsLen = 5;
     MemWrite(codePtr.address + callInsLen, X86_OP_RET);

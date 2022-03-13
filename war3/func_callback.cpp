@@ -3,10 +3,11 @@
 #include "hash_table.h"
 #include "native_table.h"
 #include "jass_vm.h"
+#include "game_end_event.h"
 
 // for passing c++ functions
-size_t callbackTopCount = 0;
-std::unordered_map<size_t, std::function<void()>> callbackMap;
+static size_t callbackTopCount = 0;
+static std::unordered_map<size_t, std::function<void()>> callbackMap;
 
 // my hook native
 constexpr int HOOK_NATIVE_CALLBACK_MAGIC = 0x3f3f3f3f;
@@ -51,9 +52,16 @@ void InstallNativeCallbackHook() {
 }
 
 HCode CreateJassCallback(const std::function<void()>& callback) {
-  // always try to install again.
-  // todo: only install when the new game loads
-  InstallNativeCallbackHook();
+  static bool run_once = false;
+  if (!run_once) {
+    run_once = true;
+    RegisterGameEndEvent([]() {
+      callbackMap.clear();
+      callbackTopCount = 0;
+      InstallNativeCallbackHook();
+    });
+    InstallNativeCallbackHook();
+  }
 
   size_t hookNativeFuncId = GetSymbolTable()->find("IsUnitType")->value;
   assert(hookNativeFuncId && "Invalid hook native func id!");
@@ -75,20 +83,9 @@ HCode CreateJassCallback(const std::function<void()>& callback) {
     0x27000000, 0x00000000,                 // ret
     0x04000000, 0x00000000,                 // end function
   };
+
+  RegisterOnlyNextGameEndEvent([bytecodeBuff]() { delete bytecodeBuff; });
   
   bytecodeBuff[0] = MemPtr(bytecodeBuff).address + 4;
   return MemPtr((MemPtr(bytecodeBuff) - GetCurrentCodeRelativeAddr()) / 4).handle;
-}
-
-void DestroyJassCallback(HCode code) {
-  // todo: create a code list, and destroy all codes when the game resets
-  auto bytecodeBuff = GetCurrentCodeRelativeAddr() + 4 * MemPtr(code).address;
-  callbackMap.erase(bytecodeBuff + 4 * sizeof(size_t));
-  delete[] reinterpret_cast<size_t*>(bytecodeBuff);
-}
-
-void ResetJassCallback()
-{
-  callbackMap.clear();
-  callbackTopCount = 0;
 }

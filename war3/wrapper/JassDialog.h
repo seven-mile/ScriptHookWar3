@@ -8,15 +8,15 @@ struct JassDialog : public JassHandle
   JassDialog(HDialog handle) : JassHandle(handle) { }
 
   static JassDialog Create();
-  void Destroy();
-  JassDialog& Clear();
-  JassDialog& SetText(std::string const& text);
+  void Destroy() const;
+  JassDialog const& Clear() const;
+  JassDialog const& SetText(std::string const& text) const;
 
-  JassDialog& AddButton(std::string const& text, int hotkey = 0);
-  JassDialog& AddButton(std::string const& text, std::function<void()> const& callback, int hotkey = 0);
+  JassDialog const& AddButton(std::string const& text, int hotkey = 0);
+  JassDialog const& AddButton(std::string const& text, std::function<void()> const& callback, int hotkey = 0);
 
-  void Display(JassPlayer ply = JassPlayer::LocalPlayer());
-  void Hide(JassPlayer ply = JassPlayer::LocalPlayer());
+  void Display(JassPlayer ply = JassPlayer::LocalPlayer()) const;
+  void Hide(JassPlayer ply = JassPlayer::LocalPlayer()) const;
 
 private:
   std::vector<HTrigger> btnTrgs;
