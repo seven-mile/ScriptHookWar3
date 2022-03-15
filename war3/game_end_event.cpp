@@ -12,6 +12,16 @@ static size_t cntGameEndHandler = 0;
 static std::unordered_map<size_t, std::function<void()>> mapGameEndHandler;
 static std::vector<std::function<void()>> vecOnceGameEndHandler;
 
+inline void CallGameEndHandlers() {
+  for (auto&& handler : mapGameEndHandler | std::ranges::views::values) {
+    handler();
+  }
+  for (auto&& handler : vecOnceGameEndHandler) {
+    handler();
+  }
+  vecOnceGameEndHandler.clear();
+}
+
 static decltype(&::TlsGetValue) pfnRealTlsGetValue = &::TlsGetValue;
 static uintptr_t(__stdcall* pfnRealStormAlloc)(uint32_t amount, const char* log_filename, uint32_t log_line, uint32_t default_value);
 static int game_tls_state = 0;
@@ -20,6 +30,7 @@ LPVOID WINAPI HookTlsGetValue(
   _In_ DWORD dwTlsIndex
 ) {
   if (game_tls_state && ::GetCurrentThreadId() == hScriptThread) {
+    if (game_tls_state == 2) CallGameEndHandlers();
     if (game_tls_state < 3) game_tls_state++;
   }
   return pfnRealTlsGetValue(dwTlsIndex);
@@ -44,13 +55,7 @@ uintptr_t __stdcall HookSMemAlloc(uint32_t amount, const char* log_filename, uin
         && std::string_view(log_filename).ends_with("\\Agile.cpp"))
       {
         game_tls_state = 0;
-        for (auto&& handler : mapGameEndHandler | std::ranges::views::values) {
-          handler();
-        }
-        for (auto&& handler : vecOnceGameEndHandler) {
-          handler();
-        }
-        vecOnceGameEndHandler.clear();
+        CallGameEndHandlers();
       }
     }
   }
