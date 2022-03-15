@@ -1,7 +1,6 @@
 #pragma once
 
 enum class PLAYER_ID {
-  LOCAL = 0,
   NEUTRAL_PASSIVE = 15,
   NEUTRAL_AGGRESSIVE = 12,
 };

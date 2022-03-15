@@ -19,7 +19,7 @@ JassPlayer JassPlayer::TriggerPlayer()
 
 JassPlayer JassPlayer::LocalPlayer()
 {
-  return CallFn<HPlayer>("Player", PLAYER_ID::LOCAL);
+  return CallFn<HPlayer>("GetLocalPlayer");
 }
 
 JassPlayer JassPlayer::NeutralPassive()
