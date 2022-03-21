@@ -30,7 +30,10 @@ LPVOID WINAPI HookTlsGetValue(
   _In_ DWORD dwTlsIndex
 ) {
   if (game_tls_state && ::GetCurrentThreadId() == hScriptThread) {
-    if (game_tls_state == 2) CallGameEndHandlers();
+    if (game_tls_state == 2) {
+      game_tls_state = 3;
+      CallGameEndHandlers();
+    }
     if (game_tls_state < 3) game_tls_state++;
   }
   return pfnRealTlsGetValue(dwTlsIndex);
@@ -68,10 +71,10 @@ void InitGameEndEvent()
   // install hook
   ::DetourTransactionBegin();
   ::DetourUpdateThread(::GetCurrentThread());
-  ::DetourAttach(&(PVOID&)pfnRealTlsGetValue, HookTlsGetValue);
+  ::DetourAttach(&(PVOID&)pfnRealTlsGetValue, &HookTlsGetValue);
   pfnRealStormAlloc = reinterpret_cast<decltype(pfnRealStormAlloc)>
     (/*(size_t)GetModuleHandle(L"Game.dll") + 0x6EBD52*/
-      DetourFindFunction("Storm.dll", (LPCSTR)401));
+      ::DetourFindFunction("Storm.dll", (LPCSTR)401));
   if (!pfnRealStormAlloc) {
     ::MessageBox(nullptr,
       L"Failed to install game reset hook,\n"
@@ -81,7 +84,7 @@ void InitGameEndEvent()
       L"ScriptHookWar3", MB_ICONERROR);
     exit(-1);
   }
-  ::DetourAttach(&(PVOID&)pfnRealStormAlloc, HookSMemAlloc);
+  ::DetourAttach(&(PVOID&)pfnRealStormAlloc, &HookSMemAlloc);
 
   ::DetourTransactionCommit();
 }

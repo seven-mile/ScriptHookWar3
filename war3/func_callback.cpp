@@ -43,12 +43,21 @@ void InstallNativeCallbackHook() {
   }
 
   auto pNode = GetNativeFuncNode("IsUnitType");
-  assert(pNode && "Failed to install native call back hook!");
+  // assert(pNode && "Failed to install native call back hook!");
 
-  if (!OriginalHookNativeFunc.address) {
-    OriginalHookNativeFunc = pNode->fnAddr;
+  if (pNode) {
+    if (!OriginalHookNativeFunc.address) {
+      OriginalHookNativeFunc = pNode->fnAddr;
+    }
+    pNode->fnAddr = (PROC)HookNativeIsUnitType;
+    OutputDebugString(L"NativeTable Hook installed.\n");
+  } else {
+    // sometimes the native func table is not inited.
+    // then we can ignore it, we will have another chance
+    // to install the hook after its initialization.
+    OutputDebugString(L"NativeTable Hook installation missed.\n");
   }
-  pNode->fnAddr = (PROC)HookNativeIsUnitType;
+
 }
 
 HCode CreateJassCallback(const std::function<void()>& callback) {
